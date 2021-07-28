@@ -26,7 +26,7 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(60), nullable=False)
     bio = db.Column(db.String(120), nullable=True)
     chats = db.Column(db.String(200), nullable=False) # eg: "1 2 3 4 5"
-    profile_pic = db.Column(db.String(7), unique=True)
+    profile_pic = db.Column(db.String(7), unique=True) # can just be hexidec
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.password}')"
@@ -38,20 +38,21 @@ class AllGroupChats(db.Model):
     num_users = db.Column(db.Integer, nullable=False)
     private = db.Column(db.Boolean, nullable=False)
     time_created = db.Column(db.DateTime)
+    description = db.Column(db.String(120))
     
     def __repr__(self):
         return f"Chat_Room('{self.chatname}', '{self.num_users}', '{self.time_created}')" 
 
 # Model for a generic chatroom message -- each message is linked to a chat room id
-class Message(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    chat_id = db.Column(db.Integer, db.ForeignKey('AllGroupChats.id'))
-    user_sent_id = db.Column(db.Integer, db.ForeignKey('User.id'), unique=False)
-    time_sent = db.Column(db.DateTime, unique=False, nullable=False)
-    content = db.Column(db.String(900), unique=False, nullable=False)
+# class Message(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     chat_id = db.Column(db.Integer, db.ForeignKey('AllGroupChats.id'))
+#     user_sent_id = db.Column(db.Integer, db.ForeignKey('User.id'), unique=False)
+#     time_sent = db.Column(db.DateTime, unique=False, nullable=False)
+#     content = db.Column(db.String(900), unique=False, nullable=False)
 
-    def __repr__(self):
-        return f"Message('{self.content}', '{self.time_sent}')"  
+#     def __repr__(self):
+#         return f"Message('{self.content}', '{self.time_sent}')"  
 
 @app.route("/home")
 @login_required
