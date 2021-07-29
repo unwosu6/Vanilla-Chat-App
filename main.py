@@ -1,8 +1,10 @@
-from flask import Flask, render_template, url_for, flash, redirect, request, jsonify
+from flask import Flask, render_template, url_for, flash, redirect, request, \
+    jsonify
 from forms import RegistrationForm, LoginForm
 from flask_sqlalchemy import SQLAlchemy
 from flask_behind_proxy import FlaskBehindProxy
-from flask_login import UserMixin, LoginManager, login_user, logout_user, current_user, login_required
+from flask_login import UserMixin, LoginManager, login_user, logout_user, \
+    current_user, login_required
 from flask_bcrypt import Bcrypt
 
 
@@ -19,14 +21,15 @@ login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
 
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
     bio = db.Column(db.String(120), nullable=True)
-    chats = db.Column(db.String(200), nullable=True) # eg: "1 2 3 4 5"
-    profile_pic = db.Column(db.String(7), unique=True) # can just be hexidec
+    chats = db.Column(db.String(200), nullable=True)  # eg: "1 2 3 4 5"
+    profile_pic = db.Column(db.String(7), unique=True)  # can just be hexidec
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.password}')"
@@ -40,20 +43,26 @@ class AllGroupChats(db.Model):
     time_created = db.Column(db.DateTime)
     description = db.Column(db.String(120))
     # owner = db.Column(db.Integer, db.ForeignKey('User.id'))
-    
-    def __repr__(self):
-        return f"Chat_Room('{self.chatname}', '{self.num_users}', '{self.time_created}')" 
 
-# Model for a generic chatroom message -- each message is linked to a chat room id
+    def __repr__(self):
+        return (
+            f"Chat_Room('{self.chatname}', '{self.num_users}',"
+            f"'{self.time_created}')"
+        )
+
+# Model for a generic chatroom message -- each message is linked to a chat
+# room id
 # class Message(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)
 #     chat_id = db.Column(db.Integer, db.ForeignKey('AllGroupChats.id'))
-#     user_sent_id = db.Column(db.Integer, db.ForeignKey('User.id'), unique=False)
+#     user_sent_id = db.Column(db.Integer, db.ForeignKey('User.id'), \
+#     unique=False)
 #     time_sent = db.Column(db.DateTime, unique=False, nullable=False)
 #     content = db.Column(db.String(900), unique=False, nullable=False)
 
 #     def __repr__(self):
-#         return f"Message('{self.content}', '{self.time_sent}')"  
+#         return f"Message('{self.content}', '{self.time_sent}')"
+
 
 @app.route("/home")
 @login_required
@@ -178,6 +187,7 @@ def userdata(get_user):
     userObj['email'] = user.email
     userObj['password'] = user.password
     return jsonify(userObj)
+
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")
