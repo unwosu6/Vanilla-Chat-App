@@ -8,6 +8,8 @@ from flask_login import UserMixin, LoginManager, login_user, logout_user, \
 from flask_bcrypt import Bcrypt
 import pickle
 from imgur import upload_img
+from werkzeug.utils import secure_filename
+import os
 
 
 app = Flask(__name__)
@@ -15,6 +17,9 @@ proxied = FlaskBehindProxy(app)
 app.config['SECRET_KEY'] = '9ef1d5a68754c1a8df1f196c00eb79c8'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+
+app.config['UPLOAD_FOLDER'] = 'temp'
+app.config['MAX_CONTENT_PATH']= '100000000'
 
 db = SQLAlchemy(app)
 
@@ -203,7 +208,11 @@ def edit_profile():
         f = request.files['files']
         print(f)
         print(type(f))
-        print(upload_img(f))
+        filename = secure_filename(f.filename)
+        print(filename)
+        f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        print(upload_img(filename))
+#         print(upload_img(f))
 #         print(type(profile_picture))
 #         if profile_picture is not None:
 #             print(profile_picture)
