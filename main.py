@@ -25,7 +25,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
     bio = db.Column(db.String(120), nullable=True)
-    chats = db.Column(db.String(200), nullable=False) # eg: "1 2 3 4 5"
+    chats = db.Column(db.String(200), nullable=True) # eg: "1 2 3 4 5"
     profile_pic = db.Column(db.String(7), unique=True) # can just be hexidec
 
     def __repr__(self):
@@ -39,6 +39,7 @@ class AllGroupChats(db.Model):
     private = db.Column(db.Boolean, nullable=False)
     time_created = db.Column(db.DateTime)
     description = db.Column(db.String(120))
+    owner = db.Column(db.Integer, db.ForeignKey('User.id'))
     
     def __repr__(self):
         return f"Chat_Room('{self.chatname}', '{self.num_users}', '{self.time_created}')" 
@@ -58,6 +59,7 @@ class AllGroupChats(db.Model):
 @login_required
 def home():
     return render_template('home.html')
+
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
@@ -126,9 +128,11 @@ def login():
             return redirect(url_for('login'))
     return render_template('login.html', title='Login', form=form)
 
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
 
 @app.route("/logout")
 @login_required
@@ -137,13 +141,20 @@ def logout():
     flash(f'Logged out', 'success')
     return redirect(url_for('home'))
 
+
 @app.route("/profile")
 @login_required
 def profile():
     return render_template('profile.html', name=current_user.username)
 
 
-@app.route("/chat/<chat_id>")
+@app.route("/<chat_id>")
+@login_required
+def profile():
+    return render_template('chat.html', name=current_user.username)
+
+
+@app.route("/api/chat/<chat_id>")
 def allUsersInChat(chat_id):
     # we can figure this out later
     users = User.query.all()
@@ -158,7 +169,7 @@ def allUsersInChat(chat_id):
     return jsonify(userArray)
 
 
-@app.route("/User/<get_user>")
+@app.route("/api/User/<get_user>")
 def userdata(get_user):
     user = User.query.filter_by(id=get_user).first()
     userObj = {}
