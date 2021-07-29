@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_behind_proxy import FlaskBehindProxy
 from flask_login import UserMixin, LoginManager, login_user, logout_user, current_user, login_required
 from flask_bcrypt import Bcrypt
+import pickle
 
 
 app = Flask(__name__)
@@ -25,8 +26,10 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
     bio = db.Column(db.String(120), nullable=True)
-    chats = db.Column(db.String(200), nullable=True) # eg: "1 2 3 4 5"
+    chats = db.Column(db.PickleType, nullable=True) # eg: "1 2 3 4 5" -- we will attempt a pickle obj
     profile_pic = db.Column(db.String(7), unique=True) # can just be hexidec
+    Message = db.relationship("message", backref="user", lazy=True)
+    AllGroupChats = db.relationship("all_group_chats", backref=db.backref("user"))
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.password}')"
@@ -39,26 +42,40 @@ class AllGroupChats(db.Model):
     private = db.Column(db.Boolean, nullable=False)
     time_created = db.Column(db.DateTime)
     description = db.Column(db.String(120))
-    # owner = db.Column(db.Integer, db.ForeignKey('User.id'))
+    owner = db.Column(db.Integer, db.ForeignKey('user.id'))
+    message = db.relationship("message", backref=db.backref("all_group_chats"))
+    user = db.relationship("user", foreign_keys=[owner])
     
     def __repr__(self):
         return f"Chat_Room('{self.chatname}', '{self.num_users}', '{self.time_created}')" 
 
-# Model for a generic chatroom message -- each message is linked to a chat room id
-# class Message(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     chat_id = db.Column(db.Integer, db.ForeignKey('AllGroupChats.id'))
-#     user_sent_id = db.Column(db.Integer, db.ForeignKey('User.id'), unique=False)
-#     time_sent = db.Column(db.DateTime, unique=False, nullable=False)
-#     content = db.Column(db.String(900), unique=False, nullable=False)
+#Model for a generic chatroom message -- each message is linked to a chat room id
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    # chat_id = db.Column(db.Integer, db.ForeignKey('all_group_chats.id'))
+    # user_sent_id = db.Column(db.Integer, db.ForeignKey('user.id'), unique=False)
+    time_sent = db.Column(db.DateTime, unique=False, nullable=False)
+    content = db.Column(db.String(900), unique=False, nullable=False)
+    # user = db.relationship("user", foreign_keys=[user_sent_id])
+    # all_group_chats = db.relationship("all_group_chats", foreign_keys=[chat_id])
 
-#     def __repr__(self):
-#         return f"Message('{self.content}', '{self.time_sent}')"  
+    def __repr__(self):
+        return f"Message('{self.content}', '{self.time_sent}')"  
 
 @app.route("/home")
 @login_required
 def home():
     return render_template('home.html')
+
+
+@app.route("/chats")
+def chats():
+    return render_template('chats.html')
+
+
+@app.route("/about")
+def about():
+    return render_template('about.html')
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -150,23 +167,79 @@ def profile():
 
 @app.route("/<chat_id>")
 @login_required
-def chat():
-    return render_template('chat.html', name=current_user.username)
+def chat(chat_id):
+    return render_template('chat.html', chat_id=chat_id, name=current_user.username)
 
 
-@app.route("/api/chat/<chat_id>")
+@app.route("/api/profile/<user_id>")
+def usersPublicChats(user_id):
+    user = User.query.filter_by(id=user_id).first()
+    public_chat_list = pickle.load(user.chats, "rb")
+    chats = AllGroupChats.query.filter_by(private=False).all()
+    chats_array = []
+    for chat in chats:
+        if chat.chat_id in public_chat_list:
+            chatObj = {}
+            chatObj['id'] = chat.id
+            chatObj['chatname'] = chat.chatname
+            chatObj['num_users'] = chat.num_users
+            chatObj['private'] = chat.private
+            chatObj['time_created'] = chat.time_created
+            chatObj['description'] = chat.description
+            chatObj['owner'] = chat.owner
+            chats_array.append(chatObj)
+    return jsonify(chats_array)
+
+
+@app.route("/api/publicchats")
+def allPublicChats():
+    chats = AllGroupChats.query.filter_by(private=False).all()
+    chats_array = []
+    for chat in chats:
+        chatObj = {}
+        chatObj['id'] = chat.id
+        chatObj['chatname'] = chat.chatname
+        chatObj['num_users'] = chat.num_users
+        chatObj['private'] = chat.private
+        chatObj['time_created'] = chat.time_created
+        chatObj['description'] = chat.description
+        chatObj['owner'] = chat.owner
+        chats_array.append(chatObj)
+    return jsonify(chats_array)
+
+
+@app.route("/api/chat/<chat_id>/messages")
+def allMessagesInChat(chat_id):
+    msgs = Message.query.filter_by(chat_id=chat_id).all()
+    chat_array = []
+    for msg in msgs:
+        msgObj = {}
+        msgObj['id'] = msg.id
+        msgObj['chat_id'] = msg.chat_id
+        msgObj['user_sent_id'] = msg.user_sent_id
+        msgObj['time_sent'] = msg.time_sent
+        msgObj['content'] = msg.content
+        chat_array.append(msgObj)
+    return jsonify(chat_array)
+
+
+@app.route("/api/chat/<chat_id>/users")
 def allUsersInChat(chat_id):
     # we can figure this out later
     users = User.query.all()
-    userArray = []
+    user_array = []
     for user in users:
         userObj = {}
+        # "if user is logged in"
         userObj['id'] = user.id
         userObj['username'] = user.username
         userObj['email'] = user.email
         userObj['password'] = user.password
-        userArray.append(userObj)
-    return jsonify(userArray)
+        userObj['bio'] = user.bio
+        userObj['chats'] = pickle.load(user.chats, "rb")
+        userObj['profile_pic'] = user.profile_pic
+        user_array.append(userObj)
+    return jsonify(user_array)
 
 
 @app.route("/api/User/<get_user>")
@@ -177,6 +250,9 @@ def userdata(get_user):
     userObj['username'] = user.username
     userObj['email'] = user.email
     userObj['password'] = user.password
+    userObj['bio'] = user.bio
+    userObj['chats'] = user.chats
+    userObj['profile_pic'] = user.profile_pic
     return jsonify(userObj)
 
 if __name__ == '__main__':
