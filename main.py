@@ -26,14 +26,15 @@ login_manager.init_app(app)
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
+    display_name = db.Column(db.String(20), unique=False, nullable=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
     bio = db.Column(db.String(120), nullable=True)
-    chats = db.Column(db.PickleType, nullable=True) # eg: "1 2 3 4 5" -- we will attempt a pickle obj
-    profile_pic = db.Column(db.String(7), unique=True) # can just be hexidec
-    Message = db.relationship("message", backref="user", lazy=True)
-    AllGroupChats = db.relationship("all_group_chats", backref=db.backref("user"))
-
+    # eg: "1 2 3 4 5" -- we will attempt a pickle obj
+    chats = db.Column(db.PickleType, nullable=False)
+    profile_pic = db.Column(db.String(120), unique=True)  # can just be hexidec
+    Message = db.relationship("Message", backref="user", lazy=True)
+    AllGroupChats = db.relationship("AllGroupChats", backref="user", lazy=True)
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.password}')"
@@ -47,8 +48,8 @@ class AllGroupChats(db.Model):
     time_created = db.Column(db.DateTime)
     description = db.Column(db.String(120))
     owner = db.Column(db.Integer, db.ForeignKey('user.id'))
-    message = db.relationship("message", backref=db.backref("all_group_chats"))
-    user = db.relationship("user", foreign_keys=[owner])
+    Message = db.relationship("Message", backref="all_group_chats", lazy=True)
+    User = db.relationship("User", foreign_keys=[owner])
 
     def __repr__(self):
         return (
@@ -57,18 +58,22 @@ class AllGroupChats(db.Model):
         )
 
 
-#Model for a generic chatroom message -- each message is linked to a chat room id
+# Model for a generic chatroom message -- each message is linked to a chat
+# room id
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    # chat_id = db.Column(db.Integer, db.ForeignKey('all_group_chats.id'))
-    # user_sent_id = db.Column(db.Integer, db.ForeignKey('user.id'), unique=False)
+    chat_id = db.Column(db.Integer, db.ForeignKey('all_group_chats.id'))
+    user_sent_id = db.Column(
+        db.Integer,
+        db.ForeignKey('user.id'),
+        unique=False)
     time_sent = db.Column(db.DateTime, unique=False, nullable=False)
     content = db.Column(db.String(900), unique=False, nullable=False)
-    # user = db.relationship("user", foreign_keys=[user_sent_id])
-    # all_group_chats = db.relationship("all_group_chats", foreign_keys=[chat_id])
+    User = db.relationship("User", foreign_keys=[user_sent_id])
+    AllGroupChats = db.relationship("AllGroupChats", foreign_keys=[chat_id])
 
     def __repr__(self):
-        return f"Message('{self.content}', '{self.time_sent}')"  
+        return f"Message('{self.content}', '{self.time_sent}')"
 
 
 @app.route("/home")
@@ -99,11 +104,17 @@ def register():
             mail = db.session.query(User.id).filter_by(
                 email=form.email.data).first() is not None
             if mail is False:
+                file = "pickles/" + form.username.data + "-chats.p"
+                # f = open(file, "w+")
+                # f.close()
+                with open(file, 'wb') as handle:
+                    pickle.dump([0], handle)
+                    print("created pickle")
                 user = User(
                     username=form.username.data,
                     email=form.email.data,
                     password=passwordhash,
-                    bio='', chats='')
+                    bio='', chats=file)
                 db.session.add(user)
                 db.session.commit()
                 flash(f'Account created for {form.username.data}!', 'success')
@@ -177,7 +188,10 @@ def profile():
 @app.route("/<chat_id>")
 @login_required
 def chat(chat_id):
-    return render_template('chat.html', chat_id=chat_id, name=current_user.username)
+    return render_template(
+        'chat.html',
+        chat_id=chat_id,
+        name=current_user.username)
 
 
 @app.route("/api/profile/<user_id>")
@@ -242,10 +256,33 @@ def allUsersInChat(chat_id):
         # "if user is logged in"
         userObj['id'] = user.id
         userObj['username'] = user.username
+        userObj['display_name'] = user.display_name
         userObj['email'] = user.email
         userObj['password'] = user.password
         userObj['bio'] = user.bio
         userObj['chats'] = pickle.load(user.chats, "rb")
+        userObj['profile_pic'] = user.profile_pic
+        user_array.append(userObj)
+    return jsonify(user_array)
+
+
+@app.route("/api/AllUsers")
+def allUsers():
+    # we can figure this out later
+    users = User.query.all()
+    user_array = []
+    for user in users:
+        userObj = {}
+        userObj['id'] = user.id
+        userObj['username'] = user.username
+        userObj['display_name'] = user.display_name
+        userObj['email'] = user.email
+        userObj['password'] = user.password
+        userObj['bio'] = user.bio
+        file = "pickles/" + user.username + "-chats.p"
+        with open(file, 'rb') as handle:
+            userObj['chats'] = pickle.load(handle)
+            print('opened pickle object')
         userObj['profile_pic'] = user.profile_pic
         user_array.append(userObj)
     return jsonify(user_array)
@@ -257,6 +294,7 @@ def userdata(get_user):
     userObj = {}
     userObj['id'] = user.id
     userObj['username'] = user.username
+    userObj['display_name'] = user.display_name
     userObj['email'] = user.email
     userObj['password'] = user.password
     userObj['bio'] = user.bio
