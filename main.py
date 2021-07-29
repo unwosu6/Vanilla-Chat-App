@@ -190,8 +190,8 @@ def profile():
 def create_new_chat(chatname, private, description, user_id):
     file = 'pickle/' + chatname + 'chat.p'
     with open(file, 'wb') as handle:
-                pickle.dump([user_id], handle)
-                print("created pickle")
+        pickle.dump([user_id], handle)
+        print("created pickle")
     new_chat = AllGroupChats(
         chatname=chatname,
         users_list=file,
