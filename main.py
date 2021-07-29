@@ -300,7 +300,7 @@ def userdata(get_user):
     userObj['bio'] = user.bio
     userObj['chats'] = user.chats
     userObj['profile_pic'] = user.profile_pic
-    return jsonify(userObj) #
+    return jsonify(userObj)
 
 
 if __name__ == '__main__':
