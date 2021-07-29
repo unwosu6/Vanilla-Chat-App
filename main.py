@@ -30,9 +30,8 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
     bio = db.Column(db.String(120), nullable=True)
-    # eg: "1 2 3 4 5" -- we will attempt a pickle obj
     chats = db.Column(db.PickleType, nullable=False)
-    profile_pic = db.Column(db.String(120), unique=True)  # can just be hexidec
+    profile_pic = db.Column(db.String(120), unique=True)
     Message = db.relationship("Message", backref="user", lazy=True)
     AllGroupChats = db.relationship("AllGroupChats", backref="user", lazy=True)
 
@@ -43,6 +42,7 @@ class User(UserMixin, db.Model):
 class AllGroupChats(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     chatname = db.Column(db.String(120), unique=True, nullable=False)
+    users_list = db.Column(db.PickleType, nullable=False)
     num_users = db.Column(db.Integer, nullable=False)
     private = db.Column(db.Boolean, nullable=False)
     time_created = db.Column(db.DateTime)
@@ -105,10 +105,10 @@ def register():
                 email=form.email.data).first() is not None
             if mail is False:
                 file = "pickles/" + form.username.data + "-chats.p"
-                # f = open(file, "w+")
-                # f.close()
+                f = open(file, "w+")
+                f.close()
                 with open(file, 'wb') as handle:
-                    pickle.dump([0], handle)
+                    pickle.dump([], handle)
                     print("created pickle")
                 user = User(
                     username=form.username.data,
@@ -214,7 +214,7 @@ def usersPublicChats(user_id):
     return jsonify(chats_array)
 
 
-@app.route("/api/publicchats")
+@app.route("/api/PublicChats")
 def allPublicChats():
     chats = AllGroupChats.query.filter_by(private=False).all()
     chats_array = []
@@ -222,6 +222,8 @@ def allPublicChats():
         chatObj = {}
         chatObj['id'] = chat.id
         chatObj['chatname'] = chat.chatname
+        with open(chat.users_list, 'rb') as handle:
+            chatObj['users_list'] = pickle.load(handle)
         chatObj['num_users'] = chat.num_users
         chatObj['private'] = chat.private
         chatObj['time_created'] = chat.time_created
@@ -249,7 +251,7 @@ def allMessagesInChat(chat_id):
 @app.route("/api/chat/<chat_id>/users")
 def allUsersInChat(chat_id):
     # we can figure this out later
-    users = User.query.all()
+    users = AllGroupChats.query.filter_by(id=chat_id).first()
     user_array = []
     for user in users:
         userObj = {}
@@ -279,7 +281,8 @@ def allUsers():
         userObj['email'] = user.email
         userObj['password'] = user.password
         userObj['bio'] = user.bio
-        file = "pickles/" + user.username + "-chats.p"
+        # file = "pickles/" + user.username + "-chats.p"
+        file = user.chats
         with open(file, 'rb') as handle:
             userObj['chats'] = pickle.load(handle)
             print('opened pickle object')
