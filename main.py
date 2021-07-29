@@ -7,6 +7,7 @@ from flask_login import UserMixin, LoginManager, login_user, logout_user, \
     current_user, login_required
 from flask_bcrypt import Bcrypt
 import pickle
+from imgur import upload_img
 
 
 app = Flask(__name__)
@@ -14,6 +15,7 @@ proxied = FlaskBehindProxy(app)
 app.config['SECRET_KEY'] = '9ef1d5a68754c1a8df1f196c00eb79c8'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+
 db = SQLAlchemy(app)
 
 bcrypt = Bcrypt(app)
@@ -104,9 +106,9 @@ def register():
             mail = db.session.query(User.id).filter_by(
                 email=form.email.data).first() is not None
             if mail is False:
-                file = "main/pickles/" + form.username.data + "-chats.p"
-                # f = open(file, "w+")
-                # f.close()
+                file = "pickles/" + form.username.data + "-chats.p"
+                f = open(file, "w+")
+                f.close()
                 with open(file, 'wb') as handle:
                     pickle.dump([0], handle)
                     print("created pickle")
@@ -193,6 +195,19 @@ def chat(chat_id):
         chat_id=chat_id,
         name=current_user.username)
 
+
+@app.route("/edit_profile", methods=['POST','GET'])
+@login_required
+def edit_profile():
+    if request.method == 'POST':
+        f = request.files['files']
+        print(f)
+        print(type(f))
+        print(upload_img(f))
+#         print(type(profile_picture))
+#         if profile_picture is not None:
+#             print(profile_picture)
+    return render_template('edit_profile.html')
 
 @app.route("/api/profile/<user_id>")
 def usersPublicChats(user_id):
