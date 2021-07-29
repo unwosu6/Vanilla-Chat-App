@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+<!--I need to make 2 columns
+     column 1 is smaller than column 2
+     column 1 needs a placeholder (maybe w/buttons) for all of the chats
+     column 2 has 2 rows - one for the message textbox and the other is to display the messages
+     for the display message area, have a scrollable on that-->
+{% block chats %}
+    <div class="container">
+      <div class="row">
+        <div class="col">
+            <div class="row">
+                <img src="#" alt ="N/A" >
+            </div>
+            <div class="row">
+                <p>Name of chat. replace w/jinja?</p>
+                <button type="button"> <!--Might have to chage button type to submit -->
+                    Join Chat
+                </button>
+            </div>
+            <div class="row">
+                <p>Name of chat. replace w/jinja?</p>
+                <button type="button">
+                    Join Chat
+                </button>
+            </div>
+            <div class="row">
+                <p>Name of chat. replace w/jinja?</p>
+                <button type="button">
+                    Join Chat
+                </button>
+            </div>
+            <div class="row">
+                <p>Name of chat. replace w/jinja?</p>
+                <button type="button">
+                    Join Chat
+                </button>
+            </div>
+        </div>
+        <div class="col">
+            <div class="row">
+                this area will hold and render messages
+            </div>
+            <div class="row">
+                <p>Enter message: </p>
+                <input type="text" id="msg" name="msg" >
+            </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
