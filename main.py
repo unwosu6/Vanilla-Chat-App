@@ -1,8 +1,10 @@
-from flask import Flask, render_template, url_for, flash, redirect, request, jsonify
+from flask import Flask, render_template, url_for, flash, redirect, request, \
+    jsonify
 from forms import RegistrationForm, LoginForm
 from flask_sqlalchemy import SQLAlchemy
 from flask_behind_proxy import FlaskBehindProxy
-from flask_login import UserMixin, LoginManager, login_user, logout_user, current_user, login_required
+from flask_login import UserMixin, LoginManager, login_user, logout_user, \
+    current_user, login_required
 from flask_bcrypt import Bcrypt
 import pickle
 
@@ -20,6 +22,7 @@ login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
 
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
@@ -30,6 +33,7 @@ class User(UserMixin, db.Model):
     profile_pic = db.Column(db.String(7), unique=True) # can just be hexidec
     Message = db.relationship("message", backref="user", lazy=True)
     AllGroupChats = db.relationship("all_group_chats", backref=db.backref("user"))
+
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.password}')"
@@ -45,9 +49,13 @@ class AllGroupChats(db.Model):
     owner = db.Column(db.Integer, db.ForeignKey('user.id'))
     message = db.relationship("message", backref=db.backref("all_group_chats"))
     user = db.relationship("user", foreign_keys=[owner])
-    
+
     def __repr__(self):
-        return f"Chat_Room('{self.chatname}', '{self.num_users}', '{self.time_created}')" 
+        return (
+            f"Chat_Room('{self.chatname}', '{self.num_users}',"
+            f"'{self.time_created}')"
+        )
+
 
 #Model for a generic chatroom message -- each message is linked to a chat room id
 class Message(db.Model):
@@ -61,6 +69,7 @@ class Message(db.Model):
 
     def __repr__(self):
         return f"Message('{self.content}', '{self.time_sent}')"  
+
 
 @app.route("/home")
 @login_required
@@ -254,6 +263,7 @@ def userdata(get_user):
     userObj['chats'] = user.chats
     userObj['profile_pic'] = user.profile_pic
     return jsonify(userObj)
+
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")
