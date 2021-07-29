@@ -7,6 +7,7 @@ from flask_login import UserMixin, LoginManager, login_user, logout_user, \
     current_user, login_required
 from flask_bcrypt import Bcrypt
 import pickle
+from datetime import datetime
 
 
 app = Flask(__name__)
@@ -182,7 +183,23 @@ def logout():
 @app.route("/profile")
 @login_required
 def profile():
+    # create_chat()
     return render_template('profile.html', name=current_user.username)
+
+
+def create_new_chat(chatname, private, description, user_id):
+    file = 'pickle/' + chatname + 'chat.p'
+    with open(file, 'wb') as handle:
+        pickle.dump([user_id], handle)
+        print("created pickle")
+    new_chat = AllGroupChats(
+        chatname=chatname,
+        users_list=file,
+        num_users=1,
+        private=private,
+        time_created=datetime.now(),
+        description=description,
+        owner=user_id)
 
 
 @app.route("/<chat_id>")
