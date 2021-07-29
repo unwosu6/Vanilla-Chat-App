@@ -15,12 +15,14 @@ def get_search_results(api_key, keyword):
     data = response.json()
     return data
 
+
 def extract_info_json(data):
     if data != "":
         video_id = data['items'][0]['id']['videoId']
         return video_id
     else:
         return []
+
 
 def video_url(video_id):
     if video_id != "":
@@ -29,6 +31,8 @@ def video_url(video_id):
         return ""
 
 # This function is for testing outside of deployment
+
+
 def print_result():
     api_key = "AIzaSyBGkGFRJ1Lzdsizug87FXPAl-yLuOjucdU"
     api_key2 = "AIzaSyAG-YgDxNNokUoSl8R3wPrakujPLXOE2fw"
@@ -38,6 +42,7 @@ def print_result():
     url = video_url(video_id)
     # print(results)
     print(url)
+
 
 # Remove this testing function later when implemented into main.py
 print_result()

@@ -24,7 +24,8 @@
 #                     password=passwordhash)
 #                 db.session.add(user)
 #                 db.session.commit()
-#                 flash(f'Account created for {form.username.data}!', 'success')
+#                 flash(f'Account created for {form.username.data}!', \
+#                 'success')
 #                 return redirect(url_for('home'))  # if so - send to home page
 #             else:
 #                 flash(f'That email is already taken please try another',
