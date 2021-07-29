@@ -39,7 +39,7 @@ class AllGroupChats(db.Model):
     private = db.Column(db.Boolean, nullable=False)
     time_created = db.Column(db.DateTime)
     description = db.Column(db.String(120))
-    owner = db.Column(db.Integer, db.ForeignKey('User.id'))
+    # owner = db.Column(db.Integer, db.ForeignKey('User.id'))
     
     def __repr__(self):
         return f"Chat_Room('{self.chatname}', '{self.num_users}', '{self.time_created}')" 
@@ -150,7 +150,7 @@ def profile():
 
 @app.route("/<chat_id>")
 @login_required
-def profile():
+def chat():
     return render_template('chat.html', name=current_user.username)
 
 
