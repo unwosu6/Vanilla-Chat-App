@@ -9,9 +9,70 @@
           {% endif %}
         {% endwith %}
 {% block content %}
-        <div class="hero-body">
-            <div class="container has-text-centered">
-                <h1 class="title">{{ name }}'s Profile</h1>
+
+        <div class="container">
+          <div class="row align-items-start">
+              
+<!--             Information Column  -->
+              
+            <div class="col-md-6 justify-content-center">
+                <div class="hero-body">
+                    <div class="container has-text-centered">
+                        <h1 class="fixed">{{ current_user.username }}'s Profile</h1>
+                    </div>
+                    <div id="profile-pic">
+                        <img src="{{ current_user.profile_pic }}" class="rounded-circle" alt="Profile Picture"> 
+                    </div>
+                    <h3 id="display-name">Display Name: {{ current_user.display_name }}</h3>
+                    <h3 class="fixed" id="bio">Bio: {{ current_user.bio }}</h3>
+                    <div>
+                        <div class="circle-block" style="float:left;">
+                            <div class="status-circle"></div>
+                        </div>
+                        <h3>Active</h3>      
+                    </div>
+                    <div style="clear:both;"><button type="button" class="btn btn-primary btn-lg">Create New Chat</button> </div>
+                </div>
             </div>
+              
+<!--             Chats Column  -->
+              
+            <div class="col-md-6 justify-content-center">
+                <div class="hero-body">
+                    <div class="container has-text-centered">
+                        <h1 class="fixed">My Chats</h1>
+                    </div>
+                    
+<!--                Private Chats -->
+                    
+                    <h3>Private Chats</h3>
+                    <div class="jumbotron">
+                      <h1 class="display-4">[chat name]</h1>
+                      <p class="lead">[chat description]</p>
+                      <p class="lead">
+                        <a class="btn btn-primary btn-lg" href="#" role="button">Join</a>
+                      </p>
+                    </div>
+                    
+<!--                Public Chats -->
+                    
+                    <h3>Public Chats</h3>
+                    <div class="jumbotron">
+                      <h1 class="display-4">[chat name]</h1>
+                      <p class="lead">[chat description]</p>
+                      <p class="lead">
+                        <a class="btn btn-primary btn-lg" href="#" role="button">Join</a>
+                      </p>
+                    </div>                
+                    
+                </div>
+                
+                
+            </div>
+              
+          </div>
         </div>
+
+       
+        
 {% endblock content %}

@@ -9,6 +9,9 @@
           {% endif %}
         {% endwith %}
 {% block content %}
+
+<div class="row">
+<div class="col-md-6">
     <div class="content-section">
         <form method="POST" action="">
             {{ form.hidden_tag() }}
@@ -51,6 +54,8 @@
             {{ form.submit(class="btn btn-outline-info") }}
          </div>
         </form>
-        <a class="nav-item nav-link" href="/register">Don't have an account? Register here</a>
+        <a class="nav-item nav-link" href="/register">Don't have an account? Register Here</a>
     </div>
+</div>
+
 {% endblock content %}
