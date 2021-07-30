@@ -10,7 +10,7 @@ body {
   background: var(--background);
   color: #333333;
   margin-top: 5rem;
-  font-family: 'herculanum';
+  font-family: 'Sen';
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -97,6 +97,53 @@ a.article-title:hover {
 .account-heading {
   font-size: 2.5rem;
 }
+
+/*----- Profile -----*/
+
+.circle-block {
+    text-align: center;
+    vertical-align: left;
+}
+.circle {
+    border-radius: 70px;
+    color: black;
+    height: 70px;
+    font-weight: bold;
+    width: 70px;
+    display: table;
+}
+.circle p {
+    vertical-align: middle;
+    display: table-cell;
+}
+
+.status-circle {
+    background: green;
+    border-radius: 25px;
+    color: black;
+    height: 25px;
+    font-weight: bold;
+    width: 25px;
+    display: table;
+}
+
+.fixed{
+    width: 900px;
+}
+
+.rounded-circle{
+border:1px solid;
+border-radius:50%;
+width:70px;
+height:70px;
+}
+
+#profile-pic{
+   min-width:70px;
+   min-height:70px; 
+   max-width:70px;
+   max-height:70px; 
+}    
 
 .bg-funky	{
   background: #FF1744;
