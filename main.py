@@ -1,6 +1,6 @@
 from flask import Flask, render_template, url_for, flash, redirect, request, \
     jsonify
-from forms import RegistrationForm, LoginForm, NewChat, SendMessage
+from forms import RegistrationForm, LoginForm, NewChat, SendMessage, BecomeMember, Leave
 from flask_sqlalchemy import SQLAlchemy
 from flask_behind_proxy import FlaskBehindProxy
 from flask_login import UserMixin, LoginManager, login_user, logout_user, \
@@ -289,10 +289,19 @@ def join_chat(user_id, chat_id):
 @login_required
 def chat(chat_id):
     form = SendMessage()
+#     form2 = BecomeMember()
+#     form3 = Leave()
     chat = AllGroupChats.query.filter_by(id=chat_id).first()
     print(chat)
     chatname = chat.chatname
     # TODO: add these two buttons to chat page
+#         if form3.validate_on_submit():
+#         leave_chat(current_user.id, chat_id)
+#         flash(f'You have left chat: {chat.display_name}! You will no longer see it on chats list!', 'success')
+#         return redirect(url_for('/profile'))
+#     if form2.validate_on_submit():
+#         join_chat(current_user.id, chat_id)
+#         flash(f'You have joned chat: {chat.display_name}! You can access it from you chats list', 'success')
     if request.method == "POST":
         # name='leave_chat' value='leave' in html
         if request.form.get('leave_chat') == 'leave':
@@ -302,7 +311,6 @@ def chat(chat_id):
         if request.form.get('become_memeber') == 'become member':
             join_chat(current_user.id, chat_id)
             flash(f'You have joined chat: {chat.display_name}! You can access it from you chats list', 'success')
-    print("about to get message (before validate)")
     if form.validate_on_submit():  # checks if entries are valid
         print('validate')
         msg = Message(

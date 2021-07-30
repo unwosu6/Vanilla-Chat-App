@@ -49,3 +49,12 @@ class SendMessage(FlaskForm):
             DataRequired(), Length(
                 min=1, max=240)])
     submit = SubmitField('send')
+
+
+class BecomeMember(FlaskForm):
+    submit = SubmitField('Become a Member')
+
+
+class Leave(FlaskForm):
+    submit = SubmitField('Leave')
+  
