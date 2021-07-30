@@ -193,7 +193,7 @@ def profile():
             f = open(file, "w+")
             f.close()
             with open(file, 'wb') as handle:
-                pickle.dump([], handle)
+                pickle.dump([current_user.id], handle)
                 print("created pickle")
             private = request.form.get('Private')
             if private == 'on':
@@ -206,11 +206,16 @@ def profile():
                 description=form.description.data,
                 private=form.private.data,
                 users_list=file,
-                num_users=0,
+                num_users=1,
                 time_created=datetime.now(),
                 owner=current_user.id)
             db.session.add(chat)
             db.session.commit()
+            with open(current_user.chats, 'rb') as handle:
+                users_chat_list = pickle.load(handle)
+                users_chat_list.append(chat.id)
+                with open(current_user.chats, 'wb') as handle:
+                    pickle.dump(users_chat_list, handle)
             flash(f'Chat: {form.chatname.data} has been created!', 'success')
             return redirect(url_for('profile'))
         else:
@@ -224,26 +229,21 @@ def profile():
         form=form)
 
 
-def create_new_chat(chatname, private, description, user_id):
-    file = 'pickle/' + chatname + 'chat.p'
-    with open(file, 'wb') as handle:
-        pickle.dump([user_id], handle)
-        print("created pickle")
-    new_chat = AllGroupChats(
-        chatname=chatname,
-        users_list=file,
-        num_users=1,
-        private=private,
-        time_created=datetime.now(),
-        description=description,
-        owner=user_id)
+def leave_chat(user_id, chat_id):
+    user = User.query.filter_by(id=user_id).first()
+    file = user.chats
+    with open(file, 'rb') as handle:
+        users_chats_list = pickle.load(handle)
+        users_chats_list.remove(chat_id)
+        with open(file, 'wb') as handle:
+            pickle.dump(users_chats_list, handle)
 
 
 @app.route("/<chat_id>")
 @login_required
 def chat(chat_id):
     return render_template(
-        'chat.html',
+        'chats.html',
         chat_id=chat_id,
         name=current_user.username)
 
@@ -251,20 +251,24 @@ def chat(chat_id):
 @app.route("/api/profile/<user_id>")
 def usersPublicChats(user_id):
     user = User.query.filter_by(id=user_id).first()
-    public_chat_list = pickle.load(user.chats, "rb")
-    chats = AllGroupChats.query.filter_by(private=False).all()
     chats_array = []
-    for chat in chats:
-        if chat.chat_id in public_chat_list:
-            chatObj = {}
-            chatObj['id'] = chat.id
-            chatObj['chatname'] = chat.chatname
-            chatObj['num_users'] = chat.num_users
-            chatObj['private'] = chat.private
-            chatObj['time_created'] = chat.time_created
-            chatObj['description'] = chat.description
-            chatObj['owner'] = chat.owner
-            chats_array.append(chatObj)
+    with open(user.chats, 'rb') as handle:
+        public_chat_list = pickle.load(handle)
+        chats = AllGroupChats.query.filter_by(private=False).all()
+        for chat in chats:
+            if chat.id in public_chat_list:
+                chatObj = {}
+                chatObj['id'] = chat.id
+                chatObj['chatname'] = chat.chatname
+                with open(chat.users_list, 'rb') as handle:
+                    chatObj['users_list'] = pickle.load(handle)
+                chatObj['num_users'] = chat.num_users
+                chatObj['private'] = chat.private
+                chatObj['time_created'] = chat.time_created
+                chatObj['description'] = chat.description
+                owner = User.query.filter_by(id=chat.owner).first()
+                chatObj['owner'] = owner.username
+                chats_array.append(chatObj)
     return jsonify(chats_array)
 
 
@@ -316,7 +320,9 @@ def allUsersInChat(chat_id):
         userObj['email'] = user.email
         userObj['password'] = user.password
         userObj['bio'] = user.bio
-        userObj['chats'] = pickle.load(user.chats, "rb")
+        file = user.chats
+        with open(file, 'rb') as handle:
+            userObj['chats'] = pickle.load(handle)
         userObj['profile_pic'] = user.profile_pic
         user_array.append(userObj)
     return jsonify(user_array)
