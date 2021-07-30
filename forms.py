@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, SelectField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, \
     InputRequired, ValidationError
 from flask import Flask
@@ -35,12 +35,18 @@ class NewChat(FlaskForm):
         'Display Name of Chat', validators=[
             DataRequired(), Length(
                 min=1, max=120)])
-    description = StringField(
+    description = TextAreaField(
         'Description', validators=[
             DataRequired(), Length(
                 min=1, max=120)])
     private = BooleanField()
     submit = SubmitField('Create')
+
+
+class InviteToChat(FlaskForm):
+    chatname = SelectField('Select Chat',
+                           validators=[DataRequired(), Length(min=1, max=120)])
+    submit = SubmitField('invite')
 
 
 class SendMessage(FlaskForm):
