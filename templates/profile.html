@@ -59,6 +59,9 @@
                                       </div>
                                   {% else %}
                                       {{ form.chatname(class="form-control form-control-lg") }}
+                                      <small id="create-chat-help" class="form-text text-muted">
+                                              this is the unique id users must enter to join the chat if it is private
+                                      </small>
                                   {% endif %}
                               </div>
                               <div class="form-group">
@@ -72,9 +75,13 @@
                                           </div>
                                       {% else %}
                                           {{ form.display_name(class="form-control form-control-lg") }}
+                                          <small id="create-chat-help" class="form-text text-muted">
+                                              this is the name other users will see when viewing your chat
+                                          </small>
                                       {% endif %}
                               </div>
                                 <div class="form-group">
+                                    
                                         {{ form.description.label(class="form-control-label") }}
                                         {% if form.description.errors %}
                                           {{ form.description(class="form-control form-control-lg is-invalid") }}
@@ -85,7 +92,11 @@
                                           </div>
                                       {% else %}
                                           {{ form.description(class="form-control form-control-lg") }}
+                                          <small id="create-chat-help" class="form-text text-muted">
+                                              limit: 120 characters
+                                          </small>
                                       {% endif %}
+                                     
                                     </div>
                                 <div class="field">
                                     <label class="checkbox">
@@ -99,7 +110,7 @@
                             </form>
                           </div>
                           <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">[back to profile]</button>
                           </div>
                         </div>
                       </div>

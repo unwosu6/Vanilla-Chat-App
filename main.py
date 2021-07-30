@@ -1,6 +1,6 @@
 from flask import Flask, render_template, url_for, flash, redirect, request, \
     jsonify
-from forms import RegistrationForm, LoginForm, NewChat
+from forms import RegistrationForm, LoginForm, NewChat, SendMessage, BecomeMember, Leave, InviteToChat
 from flask_sqlalchemy import SQLAlchemy
 from flask_behind_proxy import FlaskBehindProxy
 from flask_login import UserMixin, LoginManager, login_user, logout_user, \
@@ -41,7 +41,7 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(60), nullable=False)
     bio = db.Column(db.String(120), nullable=True)
     chats = db.Column(db.PickleType, nullable=False)
-    profile_pic = db.Column(db.String(120), unique=True)
+    profile_pic = db.Column(db.String(120), unique=False)
     Message = db.relationship("Message", backref="user", lazy=True)
     AllGroupChats = db.relationship("AllGroupChats", backref="user", lazy=True)
 
@@ -197,13 +197,14 @@ def logout():
     return redirect(url_for('home'))
 
 
-@app.route("/profile", methods=['GET', 'POST'])
+@app.route("/profile/<user_id>", methods=['GET', 'POST'])
 @login_required
-def profile():
-    form = NewChat()
-    if form.validate_on_submit():  # checks if entries are valid
-        chatname = db.session.query(User.id).filter_by(
-            username=form.chatname.data).first() is not None
+def other_profile(user_id):
+    user = User.query.filter_by(id=user_id).first()
+    form = InviteToChat()
+    if form.validate_on_submit():  # create chat button
+        chatname = db.session.query(AllGroupChats.id).filter_by(
+            chatname=form.chatname.data).first() is not None
         if chatname is False:
             file = "pickles/" + form.chatname.data + "-userslist.p"
             f = open(file, "w+")
@@ -235,10 +236,57 @@ def profile():
             flash(f'Chat: {form.chatname.data} has been created!', 'success')
             return redirect(url_for('profile'))
         else:
-            flash(f'That chatname is already taken please try another',
+            flash(f'Chat name: "{form.chatname.data}" is already taken please try another',
                   'danger')
             return redirect(url_for('profile'))
-    # create_chat()
+    return render_template(
+        'other_profile.html',
+        user=user,
+        form=form)
+
+
+
+@app.route("/profile", methods=['GET', 'POST'])
+@login_required
+def profile():
+    form = NewChat()
+    if form.validate_on_submit():  # create chat button
+        chatname = db.session.query(AllGroupChats.id).filter_by(
+            chatname=form.chatname.data).first() is not None
+        if chatname is False:
+            file = "pickles/" + form.chatname.data + "-userslist.p"
+            f = open(file, "w+")
+            f.close()
+            with open(file, 'wb') as handle:
+                pickle.dump([current_user.id], handle)
+                print("created pickle")
+            private = request.form.get('Private')
+            if private == 'on':
+                private = True
+            else:
+                private = False
+            chat = AllGroupChats(
+                chatname=form.chatname.data,
+                display_name=form.display_name.data,
+                description=form.description.data,
+                private=private,
+                users_list=file,
+                num_users=1,
+                time_created=datetime.now(),
+                owner=current_user.id)
+            db.session.add(chat)
+            db.session.commit()
+            with open(current_user.chats, 'rb') as handle:
+                users_chat_list = pickle.load(handle)
+                users_chat_list.append(chat.id)
+                with open(current_user.chats, 'wb') as handle:
+                    pickle.dump(users_chat_list, handle)
+            flash(f'Chat: {form.chatname.data} has been created!', 'success')
+            return redirect(url_for('profile'))
+        else:
+            flash(f'Chat name: "{form.chatname.data}" is already taken please try another',
+                  'danger')
+            return redirect(url_for('profile'))
     return render_template(
         'profile.html',
         name=current_user.username,
@@ -250,6 +298,54 @@ def leave_chat(user_id, chat_id):
     file = user.chats
     with open(file, 'rb') as handle:
         users_chats_list = pickle.load(handle)
+        if user_id in users_chats_list:
+            users_chats_list.remove(chat_id)
+            with open(file, 'wb') as handle:
+                pickle.dump(users_chats_list, handle)
+    # remove user from chat's user list
+    chat = AllGroupChats.query.filter_by(id=chat_id).first()
+    file = chat.users_list
+    with open(file, 'rb') as handle:
+        chat_users_list = pickle.load(handle)
+        if user_id in users_chats_list:
+            chat_users_list.remove(user_id)
+            chat.num_users = len(chat_users_list)
+            db.session.commit()
+            with open(file, 'wb') as handle:
+                pickle.dump(chat_users_list, handle)
+        else:
+            else:
+            flash(f'You are not in the chat: "{chat.display_name}".',
+                  'danger')
+
+
+# function to allow user to leave a chat
+def join_chat(user_id, chat_id):
+    # add chat to user's chat list
+    user = User.query.filter_by(id=user_id).first()
+    file = user.chats
+    with open(file, 'rb') as handle:
+        users_chats_list = pickle.load(handle)
+        # no double joining of chats
+        if user_id not in users_chats_list:
+            users_chats_list.append(chat_id)
+            with open(file, 'wb') as handle:
+                pickle.dump(users_chats_list, handle)
+    # add user to chat's users list
+        chat = AllGroupChats.query.filter_by(id=chat_id).first()
+    file = chat.users_list
+    with open(file, 'rb') as handle:
+        chat_users_list = pickle.load(handle)
+        # no double joining of chats
+        if chat_id not in chat_users_list:
+            chat_users_list.append(user_id)
+            chat.num_users = len(chat_users_list)
+            db.session.commit()
+            with open(file, 'wb') as handle:
+                pickle.dump(chat_users_list, handle)
+        else:
+            flash(f'You are already in the chat: "{chat.display_name}".',
+                  'danger')
         users_chats_list.remove(chat_id)
         with open(file, 'wb') as handle:
             pickle.dump(users_chats_list, handle)
@@ -259,6 +355,44 @@ def leave_chat(user_id, chat_id):
 @app.route("/<chat_id>")
 @login_required
 def chat(chat_id):
+    form = SendMessage()
+#     form2 = BecomeMember()
+#     form3 = Leave()
+    chat = AllGroupChats.query.filter_by(id=chat_id).first()
+    print(chat)
+    chatname = chat.display_name
+    # TODO: add these two buttons to chat page
+#         if form3.validate_on_submit():
+#         leave_chat(current_user.id, chat_id)
+#         flash(f'You have left chat: {chat.display_name}! You will no longer see it on chats list!', 'success')
+#         return redirect(url_for('/profile'))
+#     if form2.validate_on_submit():
+#         join_chat(current_user.id, chat_id)
+#         flash(f'You have joned chat: {chat.display_name}! You can access it from you chats list', 'success')
+    if request.method == "POST":
+        # name='leave_chat' value='leave' in html
+        if request.form.get('leave_chat') == 'leave':
+            leave_chat(current_user.id, chat_id)
+            flash(
+                f'You have left chat: {chat.display_name}! You will no longer see it on chats list!',
+                'success')
+            return redirect(url_for('/profile'))
+        if request.form.get('become_memeber') == 'become member':
+            join_chat(current_user.id, chat_id)
+            flash(
+                f'You have joined chat: {chat.display_name}! You can access it from you chats list',
+                'success')
+    if form.validate_on_submit():  # send message button
+        print('validate')
+        msg = Message(
+            chat_id=chat_id,
+            user_sent_id=current_user.id,
+            time_sent=datetime.now(),
+            content=form.msg.data)
+        print('made message object, hopefully')
+        db.session.add(msg)
+        db.session.commit()
+        print("commited message")
     return render_template(
         'chats.html',
         chat_id=chat_id,
@@ -309,6 +443,7 @@ def getUserChats(user_id, private):
                 chatObj = {}
                 chatObj['id'] = chat.id
                 chatObj['chatname'] = chat.chatname
+                chatObj['display_name'] = chat.display_name
                 with open(chat.users_list, 'rb') as handle:
                     chatObj['users_list'] = pickle.load(handle)
                 chatObj['num_users'] = chat.num_users

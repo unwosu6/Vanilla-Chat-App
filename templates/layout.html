@@ -31,7 +31,7 @@
                 <a class="nav-item nav-link" href="/login">Login</a>
                 {% endif %}
                 {% if current_user.is_authenticated %}
-                <a class="nav-item nav-link" href="/chats">Chats</a>
+                <a class="nav-item nav-link" href="/home">Home</a>
                 <a class="nav-item nav-link" href="/profile">Profile</a>
                 <a class="nav-item nav-link" href="/about">About</a>
                 <a class="nav-item nav-link" href="/logout">Logout</a>
@@ -60,8 +60,7 @@
         </div>
       </main>
       {% block chats %} {% endblock%}
-      <h4>after chats</h4>
-      
+
       <footer>
           <div class="row">
               <div class="col-md-2">
@@ -74,6 +73,7 @@
                   <a href="mailto:vanilla@gmail.com">[email us!]</a> 
               </div>
           </div>
+
       </footer>
     </body>
     
