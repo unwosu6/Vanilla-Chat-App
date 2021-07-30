@@ -6,6 +6,9 @@ import json
 import urllib.request
 import urllib.parse
 from imgurpython import ImgurClient
+import os
+import sys
+sys.path.append('../main')
 
 def upload_img(image):
     f = open(f'temp/{image}', "rb")
@@ -16,8 +19,16 @@ def upload_img(image):
     Client_ID2= '6d379c81402e737'
     secret = '535971c9b0314c3ca5e0a3b56507697bd2ae0afc'
     client = ImgurClient(Client_ID2, secret)
-    image = client.upload_from_path(f'temp/{image}', config=None, anon=True)
-    imgur_link = image['link']
+    imgur = client.upload_from_path(f'temp/{image}', config=None, anon=True)
+    imgur_link = imgur['link']
+#     print(os. getcwd())
+#     os.chdir('temp')
+#     print(os. getcwd())
+    print(image)
+    if os.path.exists(f'temp/{image}'):
+        os.remove(f'temp/{image}')
+    else:
+        print("The file does not exist")
     return imgur_link
 #     auth = 'https://api.imgur.com/oauth2/authorize?client_id=3c83e1ceb493e23&response_type=token'
 #     response = requests.get(auth)
