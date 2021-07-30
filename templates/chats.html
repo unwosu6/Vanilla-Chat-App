@@ -5,15 +5,18 @@
      column 2 has 2 rows - one for the message textbox and the other is to display the messages
      for the display message area, have a scrollable on that-->
 {% block chats %}
+<div id="hidden-user-id" hidden>{{ current_user.id }}</div>
+<div id="hidden-chat-id" hidden>{{ chat_id }}</div>
 <div class="col-md-12">
 <div class="container">
-<h3 class="heading text-center">[chat name]</h3>
+<h3 class="heading text-center">[{{ chatname }}]</h3>
 <div class="messaging">
       <div class="inbox_msg">
-
+        <!-- TODO: add become member and leave buttons -->
         <div class="mesgs">
           <div class="msg_history">
-            <div class="incoming_msg">
+              <div id="all-msgs"></div>
+            <!--<div class="incoming_msg">
               <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
               <div class="received_msg">
                 <div class="received_withd_msg">
@@ -72,7 +75,7 @@
                     products, at a price anyone can afford.</p>
                   <span class="time_date"> 11:11 AM    |    Today</span></div>
               </div>
-            </div>
+            </div>-->
           </div>
 
         </div>
