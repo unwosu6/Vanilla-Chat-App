@@ -8,11 +8,11 @@ $(function(){
         success: function(publicChats) {
             $.each(publicChats, function(i, chat) {
                 $publicChats.append('<div class="jumbotron">' +
-                '<h1 class="display-4">[' + chat.display_name + ']</h1>' +
+                '<h1 class="display-4">[' + chat.chatname + ']</h1>' +
                 '<p class="lead">[' + chat.description + ']</p>' +
                 '<hr class="my-4">' +
                 '<p>' + chat.num_users + ' members<br> [owner] ' + chat.owner + '</p>' +
-                '<p class="lead"><a class="btn btn-primary btn-lg" href="/chats" role="button">[join]</a></p>' +
+                '<p class="lead"><a class="btn btn-primary btn-lg" href="/' + chat.id + '" role="button">[join]</a></p>' +
                 '</div>');
             });
         }
@@ -24,11 +24,11 @@ $(function(){
         success: function(privateChats) {
             $.each(privateChats, function(i, chat) {
                 $privateChats.append('<div class="jumbotron">' +
-                '<h1 class="display-4">[' + chat.display_name + ']</h1>' +
+                '<h1 class="display-4">[' + chat.chatname + ']</h1>' +
                 '<p class="lead">[' + chat.description + ']</p>' +
                 '<hr class="my-4">' +
                 '<p>' + chat.num_users + ' members<br> [owner] ' + chat.owner + '</p>' +
-                '<p class="lead"><a class="btn btn-primary btn-lg" href="/chats" role="button">[join]</a></p>' +
+                '<p class="lead"><a class="btn btn-primary btn-lg" href="/' + chat.id + '" role="button">[join]</a></p>' +
                 '</div>');
             });
         }
