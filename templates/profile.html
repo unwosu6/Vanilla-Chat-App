@@ -8,7 +8,7 @@
             {% endfor %}
           {% endif %}
         {% endwith %}
-{% block content %}
+{% block chats %}
 
         <div class="container">
           <div class="row align-items-start">
@@ -31,82 +31,80 @@
                         </div>
                         <h3>Active</h3>      
                     </div>
+                    <!-- Button trigger modal -->
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
                         [create new chat]
                     </button>
-                    <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-  Launch demo modal
-</button>
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">New message</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form method="POST" action="">
-        {{ form.hidden_tag() }}
-          <div class="form-group">
-            {{ form.chatname.label(class="form-control-label") }}
-                {% if form.chatname.errors %}
-                  {{ form.chatname(class="form-control form-control-lg is-invalid") }}
-                  <div class="invalid-feedback">
-                    {% for error in form.chatname.errors%}
-                        <span>{{error}}</span>
-                    {% endfor %}
-                  </div>
-              {% else %}
-                  {{ form.chatname(class="form-control form-control-lg") }}
-              {% endif %}
-          </div>
-          <div class="form-group">
-            {{ form.display_name.label(class="form-control-label") }}
-                    {% if form.display_name.errors %}
-                      {{ form.display_name(class="form-control form-control-lg is-invalid") }}
-                      <div class="invalid-feedback">
-                        {% for error in form.display_name.errors%}
-                            <span>{{error}}</span>
-                        {% endfor %}
+                    
+
+                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">[create new chat]</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <form method="POST" action="">
+                            {{ form.hidden_tag() }}
+                              <div class="form-group">
+                                {{ form.chatname.label(class="form-control-label") }}
+                                    {% if form.chatname.errors %}
+                                      {{ form.chatname(class="form-control form-control-lg is-invalid") }}
+                                      <div class="invalid-feedback">
+                                        {% for error in form.chatname.errors%}
+                                            <span>{{error}}</span>
+                                        {% endfor %}
+                                      </div>
+                                  {% else %}
+                                      {{ form.chatname(class="form-control form-control-lg") }}
+                                  {% endif %}
+                              </div>
+                              <div class="form-group">
+                                {{ form.display_name.label(class="form-control-label") }}
+                                        {% if form.display_name.errors %}
+                                          {{ form.display_name(class="form-control form-control-lg is-invalid") }}
+                                          <div class="invalid-feedback">
+                                            {% for error in form.display_name.errors%}
+                                                <span>{{error}}</span>
+                                            {% endfor %}
+                                          </div>
+                                      {% else %}
+                                          {{ form.display_name(class="form-control form-control-lg") }}
+                                      {% endif %}
+                              </div>
+                                <div class="form-group">
+                                        {{ form.description.label(class="form-control-label") }}
+                                        {% if form.description.errors %}
+                                          {{ form.description(class="form-control form-control-lg is-invalid") }}
+                                          <div class="invalid-feedback">
+                                            {% for error in form.description.errors%}
+                                                <span>{{error}}</span>
+                                            {% endfor %}
+                                          </div>
+                                      {% else %}
+                                          {{ form.description(class="form-control form-control-lg") }}
+                                      {% endif %}
+                                    </div>
+                                <div class="field">
+                                    <label class="checkbox">
+                                        <input type="checkbox" name = "Private"/>
+                                        Private
+                                    </label>
+                                    </div>
+                                <div class="form-group">
+                                {{ form.submit(class="btn btn-primary btn-lg") }}
+                             </div>
+                            </form>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                          </div>
+                        </div>
                       </div>
-                  {% else %}
-                      {{ form.display_name(class="form-control form-control-lg") }}
-                  {% endif %}
-          </div>
-            <div class="form-group">
-                    {{ form.description.label(class="form-control-label") }}
-                    {% if form.description.errors %}
-                      {{ form.description(class="form-control form-control-lg is-invalid") }}
-                      <div class="invalid-feedback">
-                        {% for error in form.description.errors%}
-                            <span>{{error}}</span>
-                        {% endfor %}
-                      </div>
-                  {% else %}
-                      {{ form.description(class="form-control form-control-lg") }}
-                  {% endif %}
-                </div>
-            <div class="field">
-                <label class="checkbox">
-                    <input type="checkbox" name = "Private"/>
-                    Private
-                </label>
-                </div>
-            <div class="form-group">
-            {{ form.submit(class="btn btn-primary btn-lg") }}
-         </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Send message</button>
-      </div>
-    </div>
-  </div>
-</div>
+                    </div>
                     {% block newchat %}{% endblock %}
                 </div>
             </div>
@@ -129,9 +127,33 @@
                         <a class="btn btn-primary btn-lg" href="#" role="button">Join</a>
                       </p>
                     </div>
+                  <script language="javascript" type="text/javascript">
+                      $(function(user_id){
+                            var $user_id = user_id;
+                            var $userdata = $('#userdata');
+                            $.ajax({
+                                type: 'GET',
+                                url: '/api/profile/1',
+                                success: function(userdata) {
+                                    $.each(userdata, function(i, userdatapoint) {
+                                        $userdata.append('<div class="jumbotron">' +
+                                        '<h1 class="display-4">[' + userdatapoint.chatname + ']</h1>' +
+                                        '<p class="lead">[' + userdatapoint.description + ']</p>' +
+                                        '<hr class="my-4">' +
+                                        '<p>' + userdatapoint.num_users + ' members<br> [owner] ' + userdatapoint.owner + '</p>' +
+                                        '<p class="lead"><a class="btn btn-primary btn-lg" href="/chats" role="button">[join]</a></p>' +
+                                        '</div>');
+                                    });
+                                }
+                            });  
+                        });
+                  </script>
+                    <script language="javascript" type="text/javascript">
+                        document.function("{{ current_user.id }}");
+                    </script>
                     
 <!--                Public Chats -->
-                    
+                    <div id="userdata"></div>
                     <h3>Public Chats</h3>
                     <div class="jumbotron">
                       <h1 class="display-4">[chat name]</h1>
@@ -151,4 +173,4 @@
 
        
         
-{% endblock content %}
+{% endblock chats %}
