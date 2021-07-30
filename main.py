@@ -474,7 +474,29 @@ def allPublicChats():
         chats_array.append(chatObj)
     return jsonify(chats_array)
 
-# MIGHT DELETE -- UNSURE WHAT GOAL IS HERE
+# MIGHT DELETE -- UNSURE WHAT GOAL IS HERE -- disregard this message
+@app.route("/api/chat/<chat_id>/messages")
+def allMessagesInChat(chat_id):
+    msgs = Message.query.filter_by(chat_id=chat_id).all()
+    chat_array = []
+    for msg in msgs:
+        msgObj = {}
+        msgObj['id'] = msg.id
+        msgObj['chat_id'] = msg.chat_id
+        msgObj['user_sent_id'] = msg.user_sent_id
+        # get user pfp, username, and display_name
+        user = User.query.filter_by(id=msg.user_sent_id).first()
+        msgObj['user_sent_pfp'] = user.profile_pic
+        msgObj['user_sent_username'] = user.username
+        msgObj['user_sent_display_name'] = user.display_name
+        time = msg.time_sent
+        msgObj['time'] = time.strftime(
+            "%I") + ":" + time.strftime("%M") + " " + time.strftime("%p")
+        msgObj['date'] = time.strftime(
+            "%b") + time.strftime("%d") + ", " + time.strftime("%Y")
+        msgObj['content'] = msg.content
+        chat_array.append(msgObj)
+    return jsonify(chat_array)
 
 
 @app.route("/api/chat/<chat_id>/users")
