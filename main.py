@@ -1,6 +1,6 @@
 from flask import Flask, render_template, url_for, flash, redirect, request, \
     jsonify
-from forms import RegistrationForm, LoginForm, NewChat, SendMessage, BecomeMember, Leave
+from forms import RegistrationForm, LoginForm, NewChat
 from flask_sqlalchemy import SQLAlchemy
 from flask_behind_proxy import FlaskBehindProxy
 from flask_login import UserMixin, LoginManager, login_user, logout_user, \
@@ -244,11 +244,8 @@ def profile():
         name=current_user.username,
         form=form)
 
-# function to allow user to leave a chat
-
 
 def leave_chat(user_id, chat_id):
-    # remove chat from user's chat list
     user = User.query.filter_by(id=user_id).first()
     file = user.chats
     with open(file, 'rb') as handle:
@@ -256,85 +253,16 @@ def leave_chat(user_id, chat_id):
         users_chats_list.remove(chat_id)
         with open(file, 'wb') as handle:
             pickle.dump(users_chats_list, handle)
-    # remove user from chat's user list
-    chat = AllGroupChats.query.filter_by(id=chat_id).first()
-    file = chat.users_list
-    with open(file, 'rb') as handle:
-        chat_users_list = pickle.load(handle)
-        chat_users_list.remove(user_id)
-        chat.num_users = len(chat_users_list)
-        db.session.commit()
-        with open(file, 'wb') as handle:
-            pickle.dump(chat_users_list, handle)
 
 
-# function to allow user to leave a chat
-def join_chat(user_id, chat_id):
-    # add chat to user's chat list
-    user = User.query.filter_by(id=user_id).first()
-    file = user.chats
-    with open(file, 'rb') as handle:
-        users_chats_list = pickle.load(handle)
-        # no double joining of chats
-        if user_id not in users_chats_list:
-            users_chats_list.append(chat_id)
-            with open(file, 'wb') as handle:
-                pickle.dump(users_chats_list, handle)
-    # add user to chat's users list
-        chat = AllGroupChats.query.filter_by(id=chat_id).first()
-    file = chat.users_list
-    with open(file, 'rb') as handle:
-        chat_users_list = pickle.load(handle)
-        # no double joining of chats
-        if chat_id not in chat_users_list:
-            chat_users_list.append(user_id)
-            chat.num_users = len(chat_users_list)
-            db.session.commit()
-        with open(file, 'wb') as handle:
-            pickle.dump(chat_users_list, handle)
 
-
-@app.route("/<chat_id>", methods=['GET', 'POST'])
+@app.route("/<chat_id>")
 @login_required
 def chat(chat_id):
-    form = SendMessage()
-#     form2 = BecomeMember()
-#     form3 = Leave()
-    chat = AllGroupChats.query.filter_by(id=chat_id).first()
-    print(chat)
-    chatname = chat.chatname
-    # TODO: add these two buttons to chat page
-#         if form3.validate_on_submit():
-#         leave_chat(current_user.id, chat_id)
-#         flash(f'You have left chat: {chat.display_name}! You will no longer see it on chats list!', 'success')
-#         return redirect(url_for('/profile'))
-#     if form2.validate_on_submit():
-#         join_chat(current_user.id, chat_id)
-#         flash(f'You have joned chat: {chat.display_name}! You can access it from you chats list', 'success')
-    if request.method == "POST":
-        # name='leave_chat' value='leave' in html
-        if request.form.get('leave_chat') == 'leave':
-            leave_chat(current_user.id, chat_id)
-            flash(f'You have left chat: {chat.display_name}! You will no longer see it on chats list!', 'success')
-            return redirect(url_for('/profile'))
-        if request.form.get('become_memeber') == 'become member':
-            join_chat(current_user.id, chat_id)
-            flash(f'You have joined chat: {chat.display_name}! You can access it from you chats list', 'success')
-    if form.validate_on_submit():  # checks if entries are valid
-        print('validate')
-        msg = Message(
-            chat_id=chat_id,
-            user_sent_id=current_user.id,
-            time_sent=datetime.now(),
-            content=form.msg.data)
-        print('made message object, hopefully')
-        db.session.add(msg)
-        db.session.commit()
-        print("commited message")
     return render_template(
         'chats.html',
-        chat_id=chat_id, chatname=chatname,
-        current_user=current_user, form=form)
+        chat_id=chat_id,
+        name=current_user.username)
 
 
 @app.route("/edit_profile", methods=['POST', 'GET'])
@@ -410,29 +338,6 @@ def allPublicChats():
         chatObj['owner'] = chat.owner
         chats_array.append(chatObj)
     return jsonify(chats_array)
-
-@app.route("/api/chat/<chat_id>/messages")
-def allMessagesInChat(chat_id):
-    msgs = Message.query.filter_by(chat_id=chat_id).all()
-    chat_array = []
-    for msg in msgs:
-        msgObj = {}
-        msgObj['id'] = msg.id
-        msgObj['chat_id'] = msg.chat_id
-        msgObj['user_sent_id'] = msg.user_sent_id
-        # get user pfp, username, and display_name
-        user = User.query.filter_by(id=msg.user_sent_id).first()
-        msgObj['user_sent_pfp'] = user.profile_pic
-        msgObj['user_sent_username'] = user.username
-        msgObj['user_sent_display_name'] = user.display_name
-        time = msg.time_sent
-        msgObj['time'] = time.strftime(
-            "%I") + ":" + time.strftime("%M") + " " + time.strftime("%p")
-        msgObj['date'] = time.strftime(
-            "%b") + time.strftime("%d") + ", " + time.strftime("%Y")
-        msgObj['content'] = msg.content
-        chat_array.append(msgObj)
-    return jsonify(chat_array)
 
 # MIGHT DELETE -- UNSURE WHAT GOAL IS HERE
 

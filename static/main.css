@@ -226,7 +226,6 @@ img {max-width: 100%;}
 		.mesgs {
 		  float: left;
 		  padding: 40px;
-          width: 100%;
 		}
 
 		 .sent_msg p {
@@ -286,24 +285,4 @@ img {max-width: 100%;}
   font-weight: 300;
   letter-spacing: 2px;
   border-bottom: dotted 1px;
-}
-
-.bottomButtonsChat {
-  width: 100%;
-  text-align: center;
-}
-
-.vanillaContainer {
-    width = 180px;
-    text-align: center;
-    display: inline-block;
-}
-
-footer {
-    padding-top: 20px;
-    padding-left: 20px;
-    padding-right: 20px;
-    text-align-last: justify;
-    flex-direction: row;
-    width: 100 %;
 }
