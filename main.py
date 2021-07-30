@@ -36,7 +36,7 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(60), nullable=False)
     bio = db.Column(db.String(120), nullable=True)
     chats = db.Column(db.PickleType, nullable=False)
-    profile_pic = db.Column(db.String(120), unique=True)
+    profile_pic = db.Column(db.String(120), unique=False)
     Message = db.relationship("Message", backref="user", lazy=True)
     AllGroupChats = db.relationship("AllGroupChats", backref="user", lazy=True)
 
