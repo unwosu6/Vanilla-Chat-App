@@ -289,19 +289,19 @@ def join_chat(user_id, chat_id):
 @login_required
 def chat(chat_id):
     form = SendMessage()
-#     chat = AllGroupChats.query.filter_by(id=chat_id).first()
-#     print(chat)
-#     chatname = chat.chatname
+    chat = AllGroupChats.query.filter_by(id=chat_id).first()
+    print(chat)
+    chatname = chat.chatname
     # TODO: add these two buttons to chat page
-#     if request.method == "POST":
-#         # name='leave_chat' value='leave' in html
-#         if request.form.get('leave_chat') == 'leave':
-#             leave_chat(current_user.id, chat_id)
-#             flash(f'You have left chat: {chat.display_name}! You will no longer see it on chats list!', 'success')
-#             return redirect(url_for('/profile'))
-#         if request.form.get('become_memeber') == 'member':
-#             join_chat(current_user.id, chat_id)
-#             flash(f'You have joined chat: {chat.display_name}! You can access it from you chats list', 'success')
+    if request.method == "POST":
+        # name='leave_chat' value='leave' in html
+        if request.form.get('leave_chat') == 'leave':
+            leave_chat(current_user.id, chat_id)
+            flash(f'You have left chat: {chat.display_name}! You will no longer see it on chats list!', 'success')
+            return redirect(url_for('/profile'))
+        if request.form.get('become_memeber') == 'become member':
+            join_chat(current_user.id, chat_id)
+            flash(f'You have joined chat: {chat.display_name}! You can access it from you chats list', 'success')
     print("about to get message (before validate)")
     if form.validate_on_submit():  # checks if entries are valid
         print('validate')
@@ -316,7 +316,7 @@ def chat(chat_id):
         print("commited message")
     return render_template(
         'chats.html',
-        chat_id=chat_id, chatname="TEMPPP",
+        chat_id=chat_id, chatname=chatname,
         current_user=current_user, form=form)
 
 
