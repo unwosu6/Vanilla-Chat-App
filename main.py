@@ -1,6 +1,6 @@
 from flask import Flask, render_template, url_for, flash, redirect, request, \
     jsonify
-from forms import RegistrationForm, LoginForm
+from forms import RegistrationForm, LoginForm, NewChat
 from flask_sqlalchemy import SQLAlchemy
 from flask_behind_proxy import FlaskBehindProxy
 from flask_login import UserMixin, LoginManager, login_user, logout_user, \
@@ -43,6 +43,7 @@ class User(UserMixin, db.Model):
 class AllGroupChats(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     chatname = db.Column(db.String(120), unique=True, nullable=False)
+    display_name = db.Column(db.String(120), nullable=True)
     users_list = db.Column(db.PickleType, nullable=False)
     num_users = db.Column(db.Integer, nullable=False)
     private = db.Column(db.Boolean, nullable=False)
@@ -180,11 +181,47 @@ def logout():
     return redirect(url_for('home'))
 
 
-@app.route("/profile")
+@app.route("/profile", methods=['GET', 'POST'])
 @login_required
 def profile():
+    form = NewChat()
+    if form.validate_on_submit():  # checks if entries are valid
+        chatname = db.session.query(User.id).filter_by(
+            username=form.chatname.data).first() is not None
+        if chatname is False:
+            file = "pickles/" + form.chatname.data + "-userslist.p"
+            f = open(file, "w+")
+            f.close()
+            with open(file, 'wb') as handle:
+                pickle.dump([], handle)
+                print("created pickle")
+            private = request.form.get('Private')
+            if private == 'on':
+                private = True
+            else:
+                private = False
+            chat = AllGroupChats(
+                chatname=form.chatname.data,
+                display_name=form.display_name.data,
+                description=form.description.data,
+                private=form.private.data,
+                users_list=file,
+                num_users=0,
+                time_created=datetime.now(),
+                owner=current_user.id)
+            db.session.add(chat)
+            db.session.commit()
+            flash(f'Chat: {form.chatname.data} has been created!', 'success')
+            return redirect(url_for('profile'))
+        else:
+            flash(f'That chatname is already taken please try another',
+                  'danger')
+            return redirect(url_for('profile'))
     # create_chat()
-    return render_template('profile.html', name=current_user.username)
+    return render_template(
+        'profile.html',
+        name=current_user.username,
+        form=form)
 
 
 def create_new_chat(chatname, private, description, user_id):
