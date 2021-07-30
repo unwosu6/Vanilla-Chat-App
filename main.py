@@ -8,6 +8,7 @@ from flask_login import UserMixin, LoginManager, login_user, logout_user, \
 from flask_bcrypt import Bcrypt
 import pickle
 from datetime import datetime
+import os
 
 
 app = Flask(__name__)
@@ -22,6 +23,9 @@ bcrypt = Bcrypt(app)
 login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
+
+IMAGES = os.path.join('static', 'images')
+app.config['UPLOAD_FOLDER'] = IMAGES
 
 
 class User(UserMixin, db.Model):
@@ -97,6 +101,7 @@ def about():
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
+    pfp = os.path.join(app.config['UPLOAD_FOLDER'], 'genericpfp.png')
     if form.validate_on_submit():  # checks if entries are valid
         passwordhash = bcrypt.generate_password_hash(
             form.password.data).decode('utf-8')
@@ -116,6 +121,8 @@ def register():
                     username=form.username.data,
                     email=form.email.data,
                     password=passwordhash,
+                    display_name='',
+                    profile_pic=pfp,
                     bio='', chats=file)
                 db.session.add(user)
                 db.session.commit()
@@ -184,7 +191,6 @@ def logout():
 @app.route("/profile", methods=['GET', 'POST'])
 @login_required
 def profile():
-    # full_filename = os.path.join(app.config['UPLOAD_FOLDER'], 'img-01.png')
     form = NewChat()
     if form.validate_on_submit():  # checks if entries are valid
         chatname = db.session.query(User.id).filter_by(
