@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+               <div class="alert alert-{{ category }}">
+                 {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+{% block chats %}
+
+<nav class="navbar navbar-expand-md navbar-dark bg-steel" style="width:100%;">
+          <div class="container">
+            <a class="navbar-brand mr-4" href="/">Your Profile</a>
+          </div>
+</nav>
+
+<div class="container">
+<div class="row align-items-start">
+  
+    <div class="col-md-6 justify-content-center">
+
+        <form action="#" method="post" enctype="multipart/form-data" id='upload'>
+            <div id="profile-pic">
+                    <img src="{{ current_user.profile_pic }}" class="rounded-circle" alt="Profile Picture"> 
+            </div>
+            <input type='file' name="files" id="uploadPDF"/>
+            <br>
+            <label for="dis-name">Change Display Name:</label><br>
+            <input type="text" id="dis-name" value="{{ current_user.display_name }}" name="dis-name" maxlength="20"><br>
+            <br>
+            <label for="bio">Change Bio:</label><br>
+            <textarea id="bio" name="bio" rows="5" cols="30" wrap="soft" maxlength="600" method="post">{{ current_user.bio }}</textarea>
+            <br>
+            <input type = "submit" value = "Save Changes" id = "submit"/>
+        </form>
+        
+    </div>    
+
+</div>   
+</div>   
+{% endblock chats %}
