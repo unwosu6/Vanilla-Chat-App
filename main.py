@@ -213,6 +213,8 @@ def edit_profile():
         print(filename)
         f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         imgur = upload_img(filename)
+        current_user.profile_pic = imgur
+        db.session.commit()
         print(imgur)
         return render_template('edit_profile.html', profile_pic=imgur)
 #         print(upload_img(f))
