@@ -15,7 +15,8 @@ def upload_img(image):
     Client_ID2 = '6d379c81402e737'
     secret = '535971c9b0314c3ca5e0a3b56507697bd2ae0afc'
     client = ImgurClient(Client_ID2, secret)
-    imgur = client.upload_from_path(f'{IMAGES}/{image}', config=None, anon=True)
+    imgur = client.upload_from_path(
+        f'{IMAGES}/{image}', config=None, anon=True)
     imgur_link = imgur['link']
     print(image)
     if os.path.exists(f'{IMAGES}/{image}'):

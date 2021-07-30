@@ -33,6 +33,7 @@ login_manager.init_app(app)
 IMAGES = os.path.join('static', 'images')
 app.config['UPLOAD_FOLDER'] = IMAGES
 
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
@@ -244,7 +245,7 @@ def profile():
 @app.route("/profiles/<user_id>", methods=['GET', 'POST'])
 @login_required
 def other_profile(user_id):
-    user = load_user(user_id);
+    user = load_user(user_id)
     if user:
         return render_template(
             'other_profile.html',
