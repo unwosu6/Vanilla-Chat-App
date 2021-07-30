@@ -14,6 +14,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <script src="../static/profile.js"></script>  
+        <script src="../static/chat.js"></script>
     </head>
     <body>
       <header class="site-header">
@@ -55,25 +56,19 @@
               {% endif %}
             {% endwith %}
             {% block content %}{% endblock %}
-              <h4>after block content</h4>
           </div>
         </div>
       </main>
       {% block chats %} {% endblock%}
-      <h4>after chats</h4>
-      
       <footer>
-          <div class="row">
-              <div class="col-md-2">
-                  <p>[vanilla chat]</p>
-              </div>
-              <div class="col-md-2">
-                  <a href="tel:3852388459">(385)238-8459</a>
-              </div>
-              <div class="col-md-2">
-                  <a href="mailto:vanilla@gmail.com">[email us!]</a> 
-              </div>
+<!--           <div class="row" style="justify-content: space-between;"> -->
+             <div class="vanillaContainer">
+                        <h5>[vanilla chat]</h5>
           </div>
+          <a href="tel:3852388459">(385)238-8459</a>
+          <a href="mailto:vanilla@gmail.com">[email]</a> 
+          
+<!--           </div> -->
       </footer>
     </body>
     
