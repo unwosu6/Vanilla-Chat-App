@@ -240,3 +240,8 @@ img {max-width: 100%;}
   letter-spacing: 2px;
   border-bottom: dotted 1px;
 }
+
+.bottomButtonsChat {
+  width: 100%;
+  text-align: center;
+}
