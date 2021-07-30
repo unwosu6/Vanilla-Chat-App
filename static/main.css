@@ -246,9 +246,17 @@ img {max-width: 100%;}
   text-align: center;
 }
 
+.vanillaContainer {
+    width = 180px;
+    text-align: center;
+    display: inline-block;
+}
+
 footer {
     padding-top: 20px;
-    justify-content: center;
-    align-content: center;
+    padding-left: 20px;
+    padding-right: 20px;
+    text-align-last: justify;
+    flex-direction: row;
     width: 100 %;
 }
