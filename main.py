@@ -1,6 +1,6 @@
 from flask import Flask, render_template, url_for, flash, redirect, request, \
     jsonify
-from forms import RegistrationForm, LoginForm
+from forms import RegistrationForm, LoginForm, NewChat
 from flask_sqlalchemy import SQLAlchemy
 from flask_behind_proxy import FlaskBehindProxy
 from flask_login import UserMixin, LoginManager, login_user, logout_user, \
@@ -9,6 +9,7 @@ from flask_bcrypt import Bcrypt
 import pickle
 from imgur import upload_img
 from werkzeug.utils import secure_filename
+from datetime import datetime
 import os
 
 
@@ -29,6 +30,8 @@ login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
 
+IMAGES = os.path.join('static', 'images')
+app.config['UPLOAD_FOLDER'] = IMAGES
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -37,9 +40,8 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
     bio = db.Column(db.String(120), nullable=True)
-    # eg: "1 2 3 4 5" -- we will attempt a pickle obj
     chats = db.Column(db.PickleType, nullable=False)
-    profile_pic = db.Column(db.String(120), unique=True)  # can just be hexidec
+    profile_pic = db.Column(db.String(120), unique=True)
     Message = db.relationship("Message", backref="user", lazy=True)
     AllGroupChats = db.relationship("AllGroupChats", backref="user", lazy=True)
 
@@ -50,6 +52,8 @@ class User(UserMixin, db.Model):
 class AllGroupChats(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     chatname = db.Column(db.String(120), unique=True, nullable=False)
+    display_name = db.Column(db.String(120), nullable=True)
+    users_list = db.Column(db.PickleType, nullable=False)
     num_users = db.Column(db.Integer, nullable=False)
     private = db.Column(db.Boolean, nullable=False)
     time_created = db.Column(db.DateTime)
@@ -102,6 +106,7 @@ def about():
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
+    pfp = os.path.join(app.config['UPLOAD_FOLDER'], 'genericpfp.png')
     if form.validate_on_submit():  # checks if entries are valid
         passwordhash = bcrypt.generate_password_hash(
             form.password.data).decode('utf-8')
@@ -115,12 +120,14 @@ def register():
                 f = open(file, "w+")
                 f.close()
                 with open(file, 'wb') as handle:
-                    pickle.dump([0], handle)
+                    pickle.dump([], handle)
                     print("created pickle")
                 user = User(
                     username=form.username.data,
                     email=form.email.data,
                     password=passwordhash,
+                    display_name='',
+                    profile_pic=pfp,
                     bio='', chats=file)
                 db.session.add(user)
                 db.session.commit()
@@ -186,17 +193,70 @@ def logout():
     return redirect(url_for('home'))
 
 
-@app.route("/profile")
+@app.route("/profile", methods=['GET', 'POST'])
 @login_required
 def profile():
-    return render_template('profile.html', current_user=current_user)
+    form = NewChat()
+    if form.validate_on_submit():  # checks if entries are valid
+        chatname = db.session.query(User.id).filter_by(
+            username=form.chatname.data).first() is not None
+        if chatname is False:
+            file = "pickles/" + form.chatname.data + "-userslist.p"
+            f = open(file, "w+")
+            f.close()
+            with open(file, 'wb') as handle:
+                pickle.dump([current_user.id], handle)
+                print("created pickle")
+            private = request.form.get('Private')
+            if private == 'on':
+                private = True
+            else:
+                private = False
+            chat = AllGroupChats(
+                chatname=form.chatname.data,
+                display_name=form.display_name.data,
+                description=form.description.data,
+                private=private,
+                users_list=file,
+                num_users=1,
+                time_created=datetime.now(),
+                owner=current_user.id)
+            db.session.add(chat)
+            db.session.commit()
+            with open(current_user.chats, 'rb') as handle:
+                users_chat_list = pickle.load(handle)
+                users_chat_list.append(chat.id)
+                with open(current_user.chats, 'wb') as handle:
+                    pickle.dump(users_chat_list, handle)
+            flash(f'Chat: {form.chatname.data} has been created!', 'success')
+            return redirect(url_for('profile'))
+        else:
+            flash(f'That chatname is already taken please try another',
+                  'danger')
+            return redirect(url_for('profile'))
+    # create_chat()
+    return render_template(
+        'profile.html',
+        name=current_user.username,
+        form=form)
+
+
+def leave_chat(user_id, chat_id):
+    user = User.query.filter_by(id=user_id).first()
+    file = user.chats
+    with open(file, 'rb') as handle:
+        users_chats_list = pickle.load(handle)
+        users_chats_list.remove(chat_id)
+        with open(file, 'wb') as handle:
+            pickle.dump(users_chats_list, handle)
+
 
 
 @app.route("/<chat_id>")
 @login_required
 def chat(chat_id):
     return render_template(
-        'chat.html',
+        'chats.html',
         chat_id=chat_id,
         name=current_user.username)
 
@@ -224,27 +284,40 @@ def edit_profile():
     return render_template('edit_profile.html', profile_pic=imgur)
 
 
-@app.route("/api/profile/<user_id>")
+@app.route("/api/profile/PublicChats/<user_id>")
 def usersPublicChats(user_id):
+    return getUserChats(user_id, False)
+
+
+@app.route("/api/profile/PrivateChats/<user_id>")
+def userPrivateChats(user_id):
+    return getUserChats(user_id, True)
+
+
+def getUserChats(user_id, private):
     user = User.query.filter_by(id=user_id).first()
-    public_chat_list = pickle.load(user.chats, "rb")
-    chats = AllGroupChats.query.filter_by(private=False).all()
     chats_array = []
-    for chat in chats:
-        if chat.chat_id in public_chat_list:
-            chatObj = {}
-            chatObj['id'] = chat.id
-            chatObj['chatname'] = chat.chatname
-            chatObj['num_users'] = chat.num_users
-            chatObj['private'] = chat.private
-            chatObj['time_created'] = chat.time_created
-            chatObj['description'] = chat.description
-            chatObj['owner'] = chat.owner
-            chats_array.append(chatObj)
+    with open(user.chats, 'rb') as handle:
+        public_chat_list = pickle.load(handle)
+        chats = AllGroupChats.query.filter_by(private=private).all()
+        for chat in chats:
+            if chat.id in public_chat_list:
+                chatObj = {}
+                chatObj['id'] = chat.id
+                chatObj['chatname'] = chat.chatname
+                with open(chat.users_list, 'rb') as handle:
+                    chatObj['users_list'] = pickle.load(handle)
+                chatObj['num_users'] = chat.num_users
+                chatObj['private'] = chat.private
+                chatObj['time_created'] = chat.time_created
+                chatObj['description'] = chat.description
+                owner = User.query.filter_by(id=chat.owner).first()
+                chatObj['owner'] = owner.username
+                chats_array.append(chatObj)
     return jsonify(chats_array)
 
 
-@app.route("/api/publicchats")
+@app.route("/api/PublicChats")
 def allPublicChats():
     chats = AllGroupChats.query.filter_by(private=False).all()
     chats_array = []
@@ -252,6 +325,8 @@ def allPublicChats():
         chatObj = {}
         chatObj['id'] = chat.id
         chatObj['chatname'] = chat.chatname
+        with open(chat.users_list, 'rb') as handle:
+            chatObj['users_list'] = pickle.load(handle)
         chatObj['num_users'] = chat.num_users
         chatObj['private'] = chat.private
         chatObj['time_created'] = chat.time_created
@@ -260,26 +335,13 @@ def allPublicChats():
         chats_array.append(chatObj)
     return jsonify(chats_array)
 
-
-@app.route("/api/chat/<chat_id>/messages")
-def allMessagesInChat(chat_id):
-    msgs = Message.query.filter_by(chat_id=chat_id).all()
-    chat_array = []
-    for msg in msgs:
-        msgObj = {}
-        msgObj['id'] = msg.id
-        msgObj['chat_id'] = msg.chat_id
-        msgObj['user_sent_id'] = msg.user_sent_id
-        msgObj['time_sent'] = msg.time_sent
-        msgObj['content'] = msg.content
-        chat_array.append(msgObj)
-    return jsonify(chat_array)
+# MIGHT DELETE -- UNSURE WHAT GOAL IS HERE
 
 
 @app.route("/api/chat/<chat_id>/users")
-def allUsersInChat(chat_id):
+def allActiveUsersInChat(chat_id):
     # we can figure this out later
-    users = User.query.all()
+    users = AllGroupChats.query.filter_by(id=chat_id).first()
     user_array = []
     for user in users:
         userObj = {}
@@ -290,7 +352,9 @@ def allUsersInChat(chat_id):
         userObj['email'] = user.email
         userObj['password'] = user.password
         userObj['bio'] = user.bio
-        userObj['chats'] = pickle.load(user.chats, "rb")
+        file = user.chats
+        with open(file, 'rb') as handle:
+            userObj['chats'] = pickle.load(handle)
         userObj['profile_pic'] = user.profile_pic
         user_array.append(userObj)
     return jsonify(user_array)
@@ -309,7 +373,8 @@ def allUsers():
         userObj['email'] = user.email
         userObj['password'] = user.password
         userObj['bio'] = user.bio
-        file = "pickles/" + user.username + "-chats.p"
+        # file = "pickles/" + user.username + "-chats.p"
+        file = user.chats
         with open(file, 'rb') as handle:
             userObj['chats'] = pickle.load(handle)
             print('opened pickle object')

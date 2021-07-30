@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+<!--I need to make 2 columns
+     column 1 is smaller than column 2
+     column 1 needs a placeholder (maybe w/buttons) for all of the chats
+     column 2 has 2 rows - one for the message textbox and the other is to display the messages
+     for the display message area, have a scrollable on that-->
+{% block chats %}
+<div class="col-md-12">
+<div class="container">
+<h3 class="heading text-center">[chat name]</h3>
+<div class="messaging">
+      <div class="inbox_msg">
+
+        <div class="mesgs">
+          <div class="msg_history">
+            <div class="incoming_msg">
+              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+              <div class="received_msg">
+                <div class="received_withd_msg">
+                  <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+                  <span class="time_date"> 11:11 AM    |    June 15</span></div>
+              </div>
+            </div>
+              <div class="incoming_msg">
+              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+              <div class="received_msg">
+                <div class="received_withd_msg">
+                  <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+                  <span class="time_date"> 11:11 AM    |    June 15</span></div>
+              </div>
+            </div>
+              <div class="incoming_msg">
+              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+              <div class="received_msg">
+                <div class="received_withd_msg">
+                  <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+                  <span class="time_date"> 11:11 AM    |    June 15</span></div>
+              </div>
+            </div>
+              <div class="incoming_msg">
+              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+              <div class="received_msg">
+                <div class="received_withd_msg">
+                  <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+                  <span class="time_date"> 11:11 AM    |    June 15</span></div>
+              </div>
+            </div>
+            <div class="outgoing_msg">
+              <div class="sent_msg">
+                <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.</p>
+                <span class="time_date"> 11:11 AM    |    June 15</span> </div>
+            </div>
+            <div class="incoming_msg">
+              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+              <div class="received_msg">
+                <div class="received_withd_msg">
+                  <p>Test, which is a new approach to have</p>
+                  <span class="time_date"> 11:11 AM    |    Yesterday</span></div>
+              </div>
+            </div>
+            <div class="outgoing_msg">
+              <div class="sent_msg">
+                <p>Apollo University, Delhi, India Test</p>
+                <span class="time_date"> 11:11 AM    |    Today</span> </div>
+            </div>
+            <div class="incoming_msg">
+              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+              <div class="received_msg">
+                <div class="received_withd_msg">
+                  <p>We work directly with our designers and suppliers,
+                    and sell direct to you, which means quality, exclusive
+                    products, at a price anyone can afford.</p>
+                  <span class="time_date"> 11:11 AM    |    Today</span></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    
+  </div>
+<div class="input-group mb-3">
+  <input type="text" class="form-control" placeholder="send message..." aria-label="message" aria-describedby="basic-addon2">
+  <div class="input-group-append">
+    <button class="btn btn-primary btn-lg" type="button">[send]</button>
+  </div>
+</div>
+</div>
+{% endblock %}
