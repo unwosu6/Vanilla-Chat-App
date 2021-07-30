@@ -41,3 +41,8 @@ class NewChat(FlaskForm):
                 min=1, max=120)])
     private = BooleanField()
     submit = SubmitField('Create')
+
+
+class SendMessage(FlaskForm):
+    msg = StringField('message', validators=[DataRequired(), Length(min=1, max=240)])
+    submit = SubmitField('send')

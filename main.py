@@ -1,6 +1,6 @@
 from flask import Flask, render_template, url_for, flash, redirect, request, \
     jsonify
-from forms import RegistrationForm, LoginForm, NewChat
+from forms import RegistrationForm, LoginForm, NewChat, SendMessage
 from flask_sqlalchemy import SQLAlchemy
 from flask_behind_proxy import FlaskBehindProxy
 from flask_login import UserMixin, LoginManager, login_user, logout_user, \
@@ -285,25 +285,39 @@ def join_chat(user_id, chat_id):
             pickle.dump(chat_users_list, handle)
 
 
-@app.route("/<chat_id>")
+@app.route("/<chat_id>", methods=['GET', 'POST'])
 @login_required
 def chat(chat_id):
-    chat = AllGroupChats.query.filter_by(id=chat_id).first()
-    chatname = chat.chatname
+    form = SendMessage()
+#     chat = AllGroupChats.query.filter_by(id=chat_id).first()
+#     print(chat)
+#     chatname = chat.chatname
     # TODO: add these two buttons to chat page
-    if request.method == "POST":
-        # name='leave_chat' value='leave' in html
-        if request.form.get('leave_chat') == 'leave':
-            leave_chat(current_user.id, chat_id)
-            return redirect(url_for('/profile'))
-        if request.form.get('become_memeber') == 'member':
-            join_chat(current_user.id, chat_id)
-            flash(f'You have joined chat: {chat.display_name}!', 'success')
-
+#     if request.method == "POST":
+#         # name='leave_chat' value='leave' in html
+#         if request.form.get('leave_chat') == 'leave':
+#             leave_chat(current_user.id, chat_id)
+#             flash(f'You have left chat: {chat.display_name}! You will no longer see it on chats list!', 'success')
+#             return redirect(url_for('/profile'))
+#         if request.form.get('become_memeber') == 'member':
+#             join_chat(current_user.id, chat_id)
+#             flash(f'You have joined chat: {chat.display_name}! You can access it from you chats list', 'success')
+    print("about to get message (before validate)")
+    if form.validate_on_submit():  # checks if entries are valid
+        print('validate')
+        msg = Message(
+            chat_id=chat_id,
+            user_sent_id=current_user.id,
+            time_sent=datetime.now(),
+            content=form.msg.data)
+        print('made message object, hopefully')
+        db.session.add(msg)
+        db.session.commit()
+        print("commited message")
     return render_template(
         'chats.html',
-        chat_id=chat_id, chatname,
-        current_user=current_user)
+        chat_id=chat_id, chatname="TEMPPP",
+        current_user=current_user, form=form)
 
 
 @app.route("/api/profile/PublicChats/<user_id>")
@@ -367,7 +381,7 @@ def allMessagesInChat(chat_id):
         msgObj['id'] = msg.id
         msgObj['chat_id'] = msg.chat_id
         msgObj['user_sent_id'] = msg.user_sent_id
-        # get user pfp
+        # get user pfp, username, and display_name
         user = User.query.filter_by(id=msg.user_sent_id).first()
         msgObj['user_sent_pfp'] = user.profile_pic
         msgObj['user_sent_username'] = user.username

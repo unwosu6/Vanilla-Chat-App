@@ -6,7 +6,7 @@ $(function(){
         type: 'GET',
         url: '/api/chat/' + $chat_id + '/messages',
         success: function(allMessages) {
-            $.each(publicChats, function(i, msg) {
+            $.each(allMessages, function(i, msg) {
                 if (msg.user_sent_id != $user_id) {
                     $allMessages.append(
                         '<div class="incoming_msg">' +
@@ -18,7 +18,6 @@ $(function(){
                         '</div></div>'
                     );
                 } else {
-                    if (msg.user_sent_id != $user_id) {
                     $allMessages.append(
                         '<div class="outgoing_msg">' +
                         '<div class="sent_msg">' +
@@ -27,7 +26,7 @@ $(function(){
                         '</div>'
                     );
                 }
-            });
+             });
         }
     });
 });
