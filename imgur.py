@@ -1,14 +1,7 @@
 import requests
-# import urllib2
-import urllib
-import base64
 import json
-import urllib.request
-import urllib.parse
 from imgurpython import ImgurClient
 import os
-import sys
-sys.path.append('../main')
 
 
 def upload_img(image):
@@ -22,25 +15,9 @@ def upload_img(image):
     client = ImgurClient(Client_ID2, secret)
     imgur = client.upload_from_path(f'temp/{image}', config=None, anon=True)
     imgur_link = imgur['link']
-#     print(os. getcwd())
-#     os.chdir('temp')
-#     print(os. getcwd())
     print(image)
     if os.path.exists(f'temp/{image}'):
         os.remove(f'temp/{image}')
     else:
         print("The file does not exist")
     return imgur_link
-#     auth = 'https://api.imgur.com/oauth2/authorize?client_id=3c83e1ceb493e23&response_type=token'
-#     response = requests.get(auth)
-#     return response
-#     HEADERS = {'Authorization':'Client-ID ' + Client_ID}
-#     headers = {'Authorization': 'Client-ID 6d379c81402e737'}
-#     FORM = {f'image={image}'}
-#     data = {'image': image_data, 'title': 'test'} # create a dictionary.
-#     response = requests.post(url,headers,data)
-#     json = response.json()
-#     request = urllib.request(url=url, data= urllib.parse.urlencode(data),headers=HEADERS)
-#     response = urllib.request.urlopen(request).read()
-#     parse = json.loads(response)
-#     return json
