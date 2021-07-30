@@ -118,50 +118,28 @@
                     </div>
                     
 <!--                Private Chats -->
-                    
+                    <!-- add something so that only the logged in user can see their own private chats -->
                     <h3>Private Chats</h3>
-                    <div class="jumbotron">
+                    <!--<div class="jumbotron">
                       <h1 class="display-4">[chat name]</h1>
                       <p class="lead">[chat description]</p>
                       <p class="lead">
                         <a class="btn btn-primary btn-lg" href="#" role="button">Join</a>
                       </p>
-                    </div>
-                  <script language="javascript" type="text/javascript">
-                      $(function(user_id){
-                            var $user_id = user_id;
-                            var $userdata = $('#userdata');
-                            $.ajax({
-                                type: 'GET',
-                                url: '/api/profile/1',
-                                success: function(userdata) {
-                                    $.each(userdata, function(i, userdatapoint) {
-                                        $userdata.append('<div class="jumbotron">' +
-                                        '<h1 class="display-4">[' + userdatapoint.chatname + ']</h1>' +
-                                        '<p class="lead">[' + userdatapoint.description + ']</p>' +
-                                        '<hr class="my-4">' +
-                                        '<p>' + userdatapoint.num_users + ' members<br> [owner] ' + userdatapoint.owner + '</p>' +
-                                        '<p class="lead"><a class="btn btn-primary btn-lg" href="/chats" role="button">[join]</a></p>' +
-                                        '</div>');
-                                    });
-                                }
-                            });  
-                        });
-                  </script>
-                    <script language="javascript" type="text/javascript">
-                        document.function("{{ current_user.id }}");
-                    </script>
-                    
+                    </div>-->
+                    <div id="hidden-user-id" hidden>{{ current_user.id }}</div>
+                    <div id="private-chats"></div>
 <!--                Public Chats -->
-                    <div id="userdata"></div>
+                    
                     <h3>Public Chats</h3>
-                    <div class="jumbotron">
+                    <div id="public-chats"></div>
+                    <!--<div class="jumbotron">
                       <h1 class="display-4">[chat name]</h1>
                       <p class="lead">[chat description]</p>
                       <p class="lead">
                         <a class="btn btn-primary btn-lg" href="#" role="button">Join</a>
                       </p>
-                    </div>                
+                    </div>-->                
                     
                 </div>
                 
