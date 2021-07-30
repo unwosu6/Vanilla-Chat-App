@@ -1,5 +1,5 @@
 # Vanilla-Chat-App
-[![Deploy Test](https://github.com/unwosu6/Vanilla-Chat-App/actions/workflows/deploy.yml/badge.svg)]
+[![Deploy Test](https://github.com/unwosu6/Vanilla-Chat-App/actions/workflows/heroku_tests.yml/badge.svg)]
 
 # Link to Deployed Site
    This app has not been deployed yet, be sure to check back in when it is!
