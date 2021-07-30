@@ -184,6 +184,7 @@ def logout():
 @app.route("/profile", methods=['GET', 'POST'])
 @login_required
 def profile():
+    # full_filename = os.path.join(app.config['UPLOAD_FOLDER'], 'img-01.png')
     form = NewChat()
     if form.validate_on_submit():  # checks if entries are valid
         chatname = db.session.query(User.id).filter_by(
@@ -204,7 +205,7 @@ def profile():
                 chatname=form.chatname.data,
                 display_name=form.display_name.data,
                 description=form.description.data,
-                private=form.private.data,
+                private=private,
                 users_list=file,
                 num_users=1,
                 time_created=datetime.now(),
@@ -248,13 +249,22 @@ def chat(chat_id):
         name=current_user.username)
 
 
-@app.route("/api/profile/<user_id>")
+@app.route("/api/profile/PublicChats/<user_id>")
 def usersPublicChats(user_id):
+    return getUserChats(user_id, False)
+
+
+@app.route("/api/profile/PrivateChats/<user_id>")
+def userPrivateChats(user_id):
+    return getUserChats(user_id, True)
+
+
+def getUserChats(user_id, private):
     user = User.query.filter_by(id=user_id).first()
     chats_array = []
     with open(user.chats, 'rb') as handle:
         public_chat_list = pickle.load(handle)
-        chats = AllGroupChats.query.filter_by(private=False).all()
+        chats = AllGroupChats.query.filter_by(private=private).all()
         for chat in chats:
             if chat.id in public_chat_list:
                 chatObj = {}
@@ -305,9 +315,11 @@ def allMessagesInChat(chat_id):
         chat_array.append(msgObj)
     return jsonify(chat_array)
 
+# MIGHT DELETE -- UNSURE WHAT GOAL IS HERE
+
 
 @app.route("/api/chat/<chat_id>/users")
-def allUsersInChat(chat_id):
+def allActiveUsersInChat(chat_id):
     # we can figure this out later
     users = AllGroupChats.query.filter_by(id=chat_id).first()
     user_array = []
