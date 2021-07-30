@@ -7,6 +7,8 @@ from flask_login import UserMixin, LoginManager, login_user, logout_user, \
     current_user, login_required
 from flask_bcrypt import Bcrypt
 import pickle
+from imgur import upload_img
+from werkzeug.utils import secure_filename
 from datetime import datetime
 import os
 
@@ -16,6 +18,10 @@ proxied = FlaskBehindProxy(app)
 app.config['SECRET_KEY'] = '9ef1d5a68754c1a8df1f196c00eb79c8'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+
+app.config['UPLOAD_FOLDER'] = 'temp'
+app.config['MAX_CONTENT_PATH'] = '100000000'
+
 db = SQLAlchemy(app)
 
 bcrypt = Bcrypt(app)
@@ -26,7 +32,6 @@ login_manager.init_app(app)
 
 IMAGES = os.path.join('static', 'images')
 app.config['UPLOAD_FOLDER'] = IMAGES
-
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -100,6 +105,8 @@ def about():
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     form = RegistrationForm()
     pfp = os.path.join(app.config['UPLOAD_FOLDER'], 'genericpfp.png')
     if form.validate_on_submit():  # checks if entries are valid
@@ -142,6 +149,8 @@ def register():
 @app.route("/", methods=['GET', 'POST'])
 @app.route("/login", methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     form = LoginForm()
     if form.validate_on_submit():
         username = db.session.query(User.id).filter_by(
@@ -283,11 +292,8 @@ def profile():
         name=current_user.username,
         form=form)
 
-# function to allow user to leave a chat
-
 
 def leave_chat(user_id, chat_id):
-    # remove chat from user's chat list
     user = User.query.filter_by(id=user_id).first()
     file = user.chats
     with open(file, 'rb') as handle:
@@ -340,9 +346,13 @@ def join_chat(user_id, chat_id):
         else:
             flash(f'You are already in the chat: "{chat.display_name}".',
                   'danger')
+        users_chats_list.remove(chat_id)
+        with open(file, 'wb') as handle:
+            pickle.dump(users_chats_list, handle)
 
 
-@app.route("/<chat_id>", methods=['GET', 'POST'])
+
+@app.route("/<chat_id>")
 @login_required
 def chat(chat_id):
     form = SendMessage()
@@ -385,8 +395,31 @@ def chat(chat_id):
         print("commited message")
     return render_template(
         'chats.html',
-        chat_id=chat_id, chatname=chatname,
-        current_user=current_user, form=form)
+        chat_id=chat_id,
+        name=current_user.username)
+
+
+@app.route("/edit_profile", methods=['POST', 'GET'])
+@login_required
+def edit_profile():
+    imgur = ''
+    if request.method == 'POST':
+        f = request.files['files']
+        print(f)
+        print(type(f))
+        filename = secure_filename(f.filename)
+        print(filename)
+        f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        imgur = upload_img(filename)
+        current_user.profile_pic = imgur
+        db.session.commit()
+        print(imgur)
+        return render_template('edit_profile.html', profile_pic=imgur)
+#         print(upload_img(f))
+#         print(type(profile_picture))
+#         if profile_picture is not None:
+#             print(profile_picture)
+    return render_template('edit_profile.html', profile_pic=imgur)
 
 
 @app.route("/api/profile/PublicChats/<user_id>")
@@ -440,30 +473,6 @@ def allPublicChats():
         chatObj['owner'] = chat.owner
         chats_array.append(chatObj)
     return jsonify(chats_array)
-
-
-@app.route("/api/chat/<chat_id>/messages")
-def allMessagesInChat(chat_id):
-    msgs = Message.query.filter_by(chat_id=chat_id).all()
-    chat_array = []
-    for msg in msgs:
-        msgObj = {}
-        msgObj['id'] = msg.id
-        msgObj['chat_id'] = msg.chat_id
-        msgObj['user_sent_id'] = msg.user_sent_id
-        # get user pfp, username, and display_name
-        user = User.query.filter_by(id=msg.user_sent_id).first()
-        msgObj['user_sent_pfp'] = user.profile_pic
-        msgObj['user_sent_username'] = user.username
-        msgObj['user_sent_display_name'] = user.display_name
-        time = msg.time_sent
-        msgObj['time'] = time.strftime(
-            "%I") + ":" + time.strftime("%M") + " " + time.strftime("%p")
-        msgObj['date'] = time.strftime(
-            "%b") + time.strftime("%d") + ", " + time.strftime("%Y")
-        msgObj['content'] = msg.content
-        chat_array.append(msgObj)
-    return jsonify(chat_array)
 
 # MIGHT DELETE -- UNSURE WHAT GOAL IS HERE
 

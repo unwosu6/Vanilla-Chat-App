@@ -4,7 +4,6 @@
     <!-- Required meta tags -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
@@ -15,7 +14,6 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <script src="../static/profile.js"></script>  
-        <script src="../static/chat.js"></script>
     </head>
     <body>
       <header class="site-header">
@@ -57,20 +55,25 @@
               {% endif %}
             {% endwith %}
             {% block content %}{% endblock %}
+              <h4>after block content</h4>
           </div>
         </div>
       </main>
       {% block chats %} {% endblock%}
 
       <footer>
-<!--           <div class="row" style="justify-content: space-between;"> -->
-             <div class="vanillaContainer">
-                        <h5>[vanilla chat]</h5>
+          <div class="row">
+              <div class="col-md-2">
+                  <p>[vanilla chat]</p>
+              </div>
+              <div class="col-md-2">
+                  <a href="tel:3852388459">(385)238-8459</a>
+              </div>
+              <div class="col-md-2">
+                  <a href="mailto:vanilla@gmail.com">[email us!]</a> 
+              </div>
           </div>
-          <a href="tel:3852388459">(385)238-8459</a>
-          <a href="mailto:vanilla@gmail.com">[email]</a> 
-<!--            test-->
-<!--           </div> -->
+
       </footer>
     </body>
     
