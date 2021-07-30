@@ -19,7 +19,7 @@ app.config['SECRET_KEY'] = '9ef1d5a68754c1a8df1f196c00eb79c8'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 
 app.config['UPLOAD_FOLDER'] = 'temp'
-app.config['MAX_CONTENT_PATH']= '100000000'
+app.config['MAX_CONTENT_PATH'] = '100000000'
 
 db = SQLAlchemy(app)
 
@@ -201,10 +201,10 @@ def chat(chat_id):
         name=current_user.username)
 
 
-@app.route("/edit_profile", methods=['POST','GET'])
+@app.route("/edit_profile", methods=['POST', 'GET'])
 @login_required
 def edit_profile():
-    imgur=''
+    imgur = ''
     if request.method == 'POST':
         f = request.files['files']
         print(f)
@@ -222,6 +222,7 @@ def edit_profile():
 #         if profile_picture is not None:
 #             print(profile_picture)
     return render_template('edit_profile.html', profile_pic=imgur)
+
 
 @app.route("/api/profile/<user_id>")
 def usersPublicChats(user_id):

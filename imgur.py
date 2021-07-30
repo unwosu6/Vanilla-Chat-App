@@ -10,13 +10,14 @@ import os
 import sys
 sys.path.append('../main')
 
+
 def upload_img(image):
     f = open(f'temp/{image}', "rb")
     image_data = f.read()
     url = 'https://api.imgur.com/3/upload.json'
     url2 = 'https://api.imgur.com/3/image/'
     Client_ID = '3c83e1ceb493e23'
-    Client_ID2= '6d379c81402e737'
+    Client_ID2 = '6d379c81402e737'
     secret = '535971c9b0314c3ca5e0a3b56507697bd2ae0afc'
     client = ImgurClient(Client_ID2, secret)
     imgur = client.upload_from_path(f'temp/{image}', config=None, anon=True)
@@ -43,4 +44,3 @@ def upload_img(image):
 #     response = urllib.request.urlopen(request).read()
 #     parse = json.loads(response)
 #     return json
-
