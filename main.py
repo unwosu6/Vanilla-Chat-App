@@ -306,11 +306,15 @@ def chat(chat_id):
         # name='leave_chat' value='leave' in html
         if request.form.get('leave_chat') == 'leave':
             leave_chat(current_user.id, chat_id)
-            flash(f'You have left chat: {chat.display_name}! You will no longer see it on chats list!', 'success')
+            flash(
+                f'You have left chat: {chat.display_name}! You will no longer see it on chats list!',
+                'success')
             return redirect(url_for('/profile'))
         if request.form.get('become_memeber') == 'become member':
             join_chat(current_user.id, chat_id)
-            flash(f'You have joined chat: {chat.display_name}! You can access it from you chats list', 'success')
+            flash(
+                f'You have joined chat: {chat.display_name}! You can access it from you chats list',
+                'success')
     if form.validate_on_submit():  # checks if entries are valid
         print('validate')
         msg = Message(

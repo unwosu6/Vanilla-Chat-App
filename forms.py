@@ -57,4 +57,3 @@ class BecomeMember(FlaskForm):
 
 class Leave(FlaskForm):
     submit = SubmitField('Leave')
-  
