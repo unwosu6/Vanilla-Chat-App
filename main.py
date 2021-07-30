@@ -197,6 +197,23 @@ def logout():
     return redirect(url_for('home'))
 
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
+@app.route("/profiles/<user_id>", methods=['GET', 'POST'])
+@login_required
+def CORRECT_other_profile(user_id):
+    user = load_user(user_id)
+    if user:
+        return render_template(
+            'other_profile.html',
+            user=user,
+            name=user.username)
+    return render_template('home.html')
+
+# MUST FIX MUST FIX
 @app.route("/profile/<user_id>", methods=['GET', 'POST'])
 @login_required
 def other_profile(user_id):
@@ -398,7 +415,7 @@ def chat(chat_id):
         chat_id=chat_id,
         name=current_user.username)
 
-
+# MUST FIX MUST FIX
 @app.route("/edit_profile", methods=['POST', 'GET'])
 @login_required
 def edit_profile():
@@ -420,6 +437,36 @@ def edit_profile():
 #         if profile_picture is not None:
 #             print(profile_picture)
     return render_template('edit_profile.html', profile_pic=imgur)
+
+
+@app.route("/edit_profile", methods=['POST', 'GET'])
+@login_required
+def CORRECT_edit_profile():
+    imgur = ''
+    if request.method == 'POST':
+        f = request.files['files']
+        bio = request.form['bio']
+        display = request.form['dis-name']
+        print(f)
+        print(bio)
+        print(display)
+        print(type(f))
+        filename = secure_filename(f.filename)
+        print('filename: ' + filename)
+        if filename:
+            f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            imgur = upload_img(filename)
+            current_user.profile_pic = imgur
+        current_user.bio = bio
+        current_user.display_name = display
+        db.session.commit()
+        flash(f'Profile Updated!', 'success')
+        return render_template('edit_profile.html', profile_pic=imgur)
+#         print(upload_img(f))
+#         print(type(profile_picture))
+#         if profile_picture is not None:
+#             print(profile_picture)
+    return render_template('edit_profile.html', current_user=current_user)
 
 
 @app.route("/api/profile/PublicChats/<user_id>")
