@@ -204,6 +204,7 @@ def chat(chat_id):
 @app.route("/edit_profile", methods=['POST','GET'])
 @login_required
 def edit_profile():
+    imgur=''
     if request.method == 'POST':
         f = request.files['files']
         print(f)
@@ -211,12 +212,14 @@ def edit_profile():
         filename = secure_filename(f.filename)
         print(filename)
         f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        print(upload_img(filename))
+        imgur = upload_img(filename)
+        print(imgur)
+        return render_template('edit_profile.html', profile_pic=imgur)
 #         print(upload_img(f))
 #         print(type(profile_picture))
 #         if profile_picture is not None:
 #             print(profile_picture)
-    return render_template('edit_profile.html')
+    return render_template('edit_profile.html', profile_pic=imgur)
 
 @app.route("/api/profile/<user_id>")
 def usersPublicChats(user_id):
