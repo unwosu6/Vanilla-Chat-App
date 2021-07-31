@@ -1,0 +1,3 @@
+# Ignoring pycache
+__pycache__/
+tests/__pycache__
