@@ -34,6 +34,8 @@ login_manager.init_app(app)
 IMAGES = os.path.join('static', 'images')
 app.config['UPLOAD_FOLDER'] = IMAGES
 
+# Model to store all users
+
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -49,6 +51,8 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.password}')"
+
+# Model to store all chatrooms
 
 
 class AllGroupChats(db.Model):
@@ -71,8 +75,7 @@ class AllGroupChats(db.Model):
         )
 
 
-# Model for a generic chatroom message -- each message is linked to a chat
-# room id
+# Model for a chatroom message -- each message is linked to a chatroom id
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     chat_id = db.Column(db.Integer, db.ForeignKey('all_group_chats.id'))
@@ -93,11 +96,6 @@ class Message(db.Model):
 @login_required
 def home():
     return render_template('home.html')
-
-
-# @app.route("/chats")
-# def chats():
-#     return render_template('chats.html')
 
 
 @app.route("/about")
@@ -203,13 +201,25 @@ def load_user(user_id):
 @login_required
 def other_profile(user_id):
     user = load_user(user_id)
-    form = InviteToChat()
-    if form.validate_on_submit():
-        print("... at least the button works?")
-        # how do we collect input from a dropdown menu?!
-        # need to add user to private chat user list and add chat to user's
-        # chat list
+    curr_user = load_user(current_user.id)
     if user:
+        # create list of current user's private chats to invite the user to
+        curr_user_private_chats = []
+        with open(curr_user.chats, 'rb') as handle:
+            curr_user_chats = pickle.load(handle)
+            for chat_id in curr_user_chats:
+                chat = AllGroupChats.query.get(chat_id)
+                if chat.private:
+                    curr_user_private_chats.append((chat.id, chat.chatname))
+        form = InviteToChat()
+        form.chatname.choices = curr_user_private_chats
+        if form.validate_on_submit():
+            chat_id = form.chatname.data
+            join_chat(user_id, chat_id)
+            print("... at least the button works?")
+            # how do we collect input from a dropdown menu?!
+            # need to add user to private chat user list and add chat to user's
+            # chat list
         return render_template(
             'other_profile.html',
             user=user, form=form,
@@ -301,7 +311,7 @@ def profile():
                 users_chat_list.append(chat.id)
                 with open(current_user.chats, 'wb') as handle:
                     pickle.dump(users_chat_list, handle)
-            flash(f'Chat: {form.chatname.data} has been created!', 'success')
+            flash(f'Chat: "{form.chatname.data}" has been created!', 'success')
             return redirect(url_for('profile'))
         else:
             flash(
@@ -338,12 +348,13 @@ def leave_chat(user_id, chat_id):
             with open(file, 'wb') as handle:
                 pickle.dump(chat_users_list, handle)
             flash(
-                f'You have left chat: {chat.display_name}!' +
+                f'{user.username} has left chat: "{chat.display_name}"!' +
                 ' You will no longer see it on your chats list!',
                 'success')
         else:
-            flash(f'You are not in the chat: "{chat.display_name}".',
-                  'danger')
+            flash(
+                f'{user.username} is not in the chat: "{chat.display_name}".',
+                'danger')
 
 
 # function to allow user to leave a chat
@@ -373,12 +384,12 @@ def join_chat(user_id, chat_id):
             with open(file, 'wb') as handle:
                 pickle.dump(chat_users_list, handle)
             flash(
-                f'You have joined chat: {chat.display_name}!' +
-                ' You can access it from your chats list',
+                f'{user.username} has joined chat: "{chat.display_name}"!',
                 'success')
         else:
-            flash(f'You are already in the chat: "{chat.display_name}".',
-                  'danger')
+            flash(
+                f'{user.username} is already in chat: "{chat.display_name}".',
+                'danger')
 
 
 @app.route("/<chat_id>", methods=["GET", "POST"])
@@ -543,7 +554,7 @@ def allMessagesInChat(chat_id):
         msgObj['time'] = time.strftime(
             "%I") + ":" + time.strftime("%M") + " " + time.strftime("%p")
         msgObj['date'] = time.strftime(
-            "%b") + time.strftime("%d") + ", " + time.strftime("%Y")
+            "%b") + " " + time.strftime("%d") + ", " + time.strftime("%Y")
         msgObj['content'] = msg.content
         chat_array.append(msgObj)
     return jsonify(chat_array)
@@ -584,7 +595,6 @@ def allUsers():
         userObj['email'] = user.email
         userObj['password'] = user.password
         userObj['bio'] = user.bio
-        # file = "pickles/" + user.username + "-chats.p"
         file = user.chats
         with open(file, 'rb') as handle:
             userObj['chats'] = pickle.load(handle)
@@ -604,7 +614,6 @@ def userdata(get_user):
     userObj['email'] = user.email
     userObj['password'] = user.password
     userObj['bio'] = user.bio
-    # file = "pickles/" + user.username + "-chats.p"
     file = user.chats
     with open(file, 'rb') as handle:
         userObj['chats'] = pickle.load(handle)
