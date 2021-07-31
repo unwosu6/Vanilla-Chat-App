@@ -2,7 +2,7 @@
 ![Deploy Test](https://github.com/unwosu6/Vanilla-Chat-App/actions/workflows/heroku_tests.yml/badge.svg)
 
 # Link to Deployed Site
-   This app has not been deployed yet, be sure to check back in when it is!
+  [Vanilla](https://vanillachatapp.herokuapp.com/) - Most recent stable deployment version
    
 ## Installation
 Use the package manager pip3 to install the following dependencies:
