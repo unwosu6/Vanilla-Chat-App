@@ -1,6 +1,7 @@
 from flask import Flask, render_template, url_for, flash, redirect, request, \
     jsonify
-from forms import RegistrationForm, LoginForm, NewChat, SendMessage, BecomeMember, Leave, InviteToChat
+from forms import RegistrationForm, LoginForm, NewChat, SendMessage, \
+    BecomeMember, Leave, InviteToChat
 from flask_sqlalchemy import SQLAlchemy
 from flask_behind_proxy import FlaskBehindProxy
 from flask_login import UserMixin, LoginManager, login_user, logout_user, \
@@ -255,7 +256,8 @@ def other_profile(user_id):
 #             flash(f'Chat: {form.chatname.data} has been created!', 'success')
 #             return redirect(url_for('profile'))
 #         else:
-#             flash(f'Chat name: "{form.chatname.data}" is already taken please try another',
+#             flash(f'Chat name: "{form.chatname.data}"' +
+#             ' is already taken please try another',
 #                   'danger')
 #             return redirect(url_for('profile'))
 #     return render_template(
@@ -303,8 +305,8 @@ def profile():
             return redirect(url_for('profile'))
         else:
             flash(
-                f'Chat name: "{form.chatname.data}" is already taken please try another',
-                'danger')
+                f'Chat name: "{form.chatname.data}" is already taken please' +
+                ' try another', 'danger')
             return redirect(url_for('profile'))
     return render_template(
         'profile.html',
@@ -336,7 +338,8 @@ def leave_chat(user_id, chat_id):
             with open(file, 'wb') as handle:
                 pickle.dump(chat_users_list, handle)
             flash(
-                f'You have left chat: {chat.display_name}! You will no longer see it on your chats list!',
+                f'You have left chat: {chat.display_name}!' +
+                ' You will no longer see it on your chats list!',
                 'success')
         else:
             flash(f'You are not in the chat: "{chat.display_name}".',
@@ -370,7 +373,8 @@ def join_chat(user_id, chat_id):
             with open(file, 'wb') as handle:
                 pickle.dump(chat_users_list, handle)
             flash(
-                f'You have joined chat: {chat.display_name}! You can access it from your chats list',
+                f'You have joined chat: {chat.display_name}!' +
+                ' You can access it from your chats list',
                 'success')
         else:
             flash(f'You are already in the chat: "{chat.display_name}".',
