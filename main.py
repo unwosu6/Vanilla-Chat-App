@@ -33,6 +33,7 @@ login_manager.init_app(app)
 IMAGES = os.path.join('static', 'images')
 app.config['UPLOAD_FOLDER'] = IMAGES
 
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
@@ -204,8 +205,9 @@ def other_profile(user_id):
     form = InviteToChat()
     if form.validate_on_submit():
         print("... at least the button works?")
-            # how do we collect input from a dropdown menu?!
-            # need to add user to private chat user list and add chat to user's chat list
+        # how do we collect input from a dropdown menu?!
+        # need to add user to private chat user list and add chat to user's
+        # chat list
     if user:
         return render_template(
             'other_profile.html',
@@ -262,7 +264,6 @@ def other_profile(user_id):
 #         form=form)
 
 
-
 @app.route("/profile", methods=['GET', 'POST'])
 @login_required
 def profile():
@@ -301,8 +302,9 @@ def profile():
             flash(f'Chat: {form.chatname.data} has been created!', 'success')
             return redirect(url_for('profile'))
         else:
-            flash(f'Chat name: "{form.chatname.data}" is already taken please try another',
-                  'danger')
+            flash(
+                f'Chat name: "{form.chatname.data}" is already taken please try another',
+                'danger')
             return redirect(url_for('profile'))
     return render_template(
         'profile.html',
@@ -334,8 +336,8 @@ def leave_chat(user_id, chat_id):
             with open(file, 'wb') as handle:
                 pickle.dump(chat_users_list, handle)
             flash(
-                    f'You have left chat: {chat.display_name}! You will no longer see it on your chats list!',
-                    'success')
+                f'You have left chat: {chat.display_name}! You will no longer see it on your chats list!',
+                'success')
         else:
             flash(f'You are not in the chat: "{chat.display_name}".',
                   'danger')
@@ -375,7 +377,6 @@ def join_chat(user_id, chat_id):
                   'danger')
 
 
-
 @app.route("/<chat_id>", methods=["GET", "POST"])
 @login_required
 def chat(chat_id):
@@ -400,7 +401,7 @@ def chat(chat_id):
             content=form.msg.data)
         db.session.add(msg)
         db.session.commit()
-            
+
     return render_template(
         'chats.html', chatname=chatname,
         chat_id=chat_id, form=form)
@@ -511,10 +512,15 @@ def allPublicChats():
         owner = User.query.filter_by(id=chat.owner).first()
         chatObj['owner'] = owner.username
         chats_array.append(chatObj)
-    chats_array = sorted(chats_array, key = lambda x: x['num_users'],reverse=True)
+    chats_array = sorted(
+        chats_array,
+        key=lambda x: x['num_users'],
+        reverse=True)
     return jsonify(chats_array)
 
 # MIGHT DELETE -- UNSURE WHAT GOAL IS HERE -- disregard this message
+
+
 @app.route("/api/chat/<chat_id>/messages")
 def allMessagesInChat(chat_id):
     msgs = Message.query.filter_by(chat_id=chat_id).all()
