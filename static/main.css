@@ -148,7 +148,11 @@ height:70px;
    min-height:70px; 
    max-width:70px;
    max-height:70px; 
-}    
+}
+
+.titleContainer {
+   padding-left: 0px;
+}
 
 /*----- Chat -----*/
 .bg-funky	{
