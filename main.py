@@ -20,9 +20,6 @@ app.config['SECRET_KEY'] = '9ef1d5a68754c1a8df1f196c00eb79c8'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 
-app.config['UPLOAD_FOLDER'] = 'temp'
-app.config['MAX_CONTENT_PATH'] = '100000000'
-
 db = SQLAlchemy(app)
 
 bcrypt = Bcrypt(app)
@@ -33,6 +30,7 @@ login_manager.init_app(app)
 
 IMAGES = os.path.join('static', 'images')
 app.config['UPLOAD_FOLDER'] = IMAGES
+app.config['MAX_CONTENT_PATH'] = '100000000'
 
 # Model to store all users
 
