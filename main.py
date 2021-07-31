@@ -465,7 +465,7 @@ def edit_profile():
         current_user.display_name = display
         db.session.commit()
         flash(f'Profile Updated!', 'success')
-        return render_template('edit_profile.html', profile_pic=imgur)
+        return redirect(url_for('profile'))
 #         print(upload_img(f))
 #         print(type(profile_picture))
 #         if profile_picture is not None:
