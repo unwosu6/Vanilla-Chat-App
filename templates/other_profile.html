@@ -1,0 +1,122 @@
+{% extends "layout.html" %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+               <div class="alert alert-{{ category }}">
+                 {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+{% block chats %}
+        <div class="container">
+          <div class="row align-items-start">
+              
+<!--             Information Column  -->
+              
+            <div class="col-md-6 justify-content-center">
+                <div class="hero-body">
+                    
+                    <div class="container has-text-centered">
+                        <div style="float:left;padding-right:10px"><h1>{{ user.username }}'s Profile</h1></div>
+                    </div>
+                    
+                    <div id="profile-pic" style="clear:left;">
+                        <img src="{{ user.profile_pic }}" class="rounded-circle" alt="Profile Picture"> 
+                    </div>
+                    <h3 id="display-name">Display Name: {{ user.display_name }}</h3>
+                    <h3 id="bio">Bio: {{ user.bio }}</h3>
+                    
+                    <div>
+                        <div class="circle-block" style="float:left;">
+                            <div class="status-circle"></div>
+                        </div>
+                        <h3>Active</h3>      
+                    </div>
+                    
+                    <!-- Button trigger modal -->
+                   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                        [invite to chat]
+                    </button>
+                    
+
+                    <!--<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">[create new chat]</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <form method="POST" action="">
+                            {{ form.hidden_tag() }}
+                              <div class="form-group">
+                                {{ form.chatname.label(class="form-control-label") }}
+                                    {% if form.chatname.errors %}
+                                      {{ form.chatname(class="form-control form-control-lg is-invalid") }}
+                                      <div class="invalid-feedback">
+                                        {% for error in form.chatname.errors%}
+                                            <span>{{error}}</span>
+                                        {% endfor %}
+                                      </div>
+                                  {% else %}
+                                      {{ form.chatname(class="form-control form-control-lg") }}
+                                      <small id="create-chat-help" class="form-text text-muted">
+                                              this is the unique id users must enter to join the chat if it is private
+                                      </small>
+                                  {% endif %}
+                              </div>
+                                <div class="form-group">
+                                {{ form.submit(class="btn btn-primary btn-lg") }}
+                             </div>
+                            </form>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">[back to profile]</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>-->
+                    
+                </div>
+            </div>
+              
+<!--             Chats Column  -->
+              
+            <div class="col-md-6 justify-content-center">
+                <div class="hero-body">
+                    <div class="container has-text-centered">
+                        <h1 class="fixed">Shared Chats</h1>
+                    </div>
+                    
+                    <div class="container has-text-centered">
+                        <h1 class="fixed">Public Chats</h1>
+                        <div id="hidden-user-id" hidden>{{ user.id }}</div>
+                        <div id="public-chats"></div>
+                    </div>
+                    
+<!--                Shared Private Chats, functionality isn't there yet. -->
+
+<!--                     <h3>Private Chats</h3>
+                    <div class="jumbotron">
+                      <h1 class="display-4">[chat name]</h1>
+                      <p class="lead">[chat description]</p>
+                      <p class="lead">
+                        <a class="btn btn-primary btn-lg" href="#" role="button">Join</a>
+                      </p>
+                    </div>
+                    <div id="hidden-user-id" hidden>{{ current_user.id }}</div>
+                    <div id="private-chats"></div>
+                     -->
+                    
+                </div>
+                
+                
+            </div>
+              
+          </div>
+        </div>
+      
+{% endblock chats %}

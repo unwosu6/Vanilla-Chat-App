@@ -93,9 +93,9 @@ def home():
     return render_template('home.html')
 
 
-@app.route("/chats")
-def chats():
-    return render_template('chats.html')
+# @app.route("/chats")
+# def chats():
+#     return render_template('chats.html')
 
 
 @app.route("/about")
@@ -204,62 +204,67 @@ def load_user(user_id):
 
 @app.route("/profiles/<user_id>", methods=['GET', 'POST'])
 @login_required
-def CORRECT_other_profile(user_id):
+def other_profile(user_id):
     user = load_user(user_id)
+    form = InviteToChat()
+    if form.validate_on_submit():
+        print("... at least the button works?")
+            # how do we collect input from a dropdown menu?!
+            # need to add user to private chat user list and add chat to user's chat list
     if user:
         return render_template(
             'other_profile.html',
-            user=user,
+            user=user, form=form,
             name=user.username)
     return render_template('home.html')
 
 # MUST FIX MUST FIX
-@app.route("/profile/<user_id>", methods=['GET', 'POST'])
-@login_required
-def other_profile(user_id):
-    user = User.query.filter_by(id=user_id).first()
-    form = InviteToChat()
-    if form.validate_on_submit():  # create chat button
-        chatname = db.session.query(AllGroupChats.id).filter_by(
-            chatname=form.chatname.data).first() is not None
-        if chatname is False:
-            file = "pickles/" + form.chatname.data + "-userslist.p"
-            f = open(file, "w+")
-            f.close()
-            with open(file, 'wb') as handle:
-                pickle.dump([current_user.id], handle)
-                print("created pickle")
-            private = request.form.get('Private')
-            if private == 'on':
-                private = True
-            else:
-                private = False
-            chat = AllGroupChats(
-                chatname=form.chatname.data,
-                display_name=form.display_name.data,
-                description=form.description.data,
-                private=private,
-                users_list=file,
-                num_users=1,
-                time_created=datetime.now(),
-                owner=current_user.id)
-            db.session.add(chat)
-            db.session.commit()
-            with open(current_user.chats, 'rb') as handle:
-                users_chat_list = pickle.load(handle)
-                users_chat_list.append(chat.id)
-                with open(current_user.chats, 'wb') as handle:
-                    pickle.dump(users_chat_list, handle)
-            flash(f'Chat: {form.chatname.data} has been created!', 'success')
-            return redirect(url_for('profile'))
-        else:
-            flash(f'Chat name: "{form.chatname.data}" is already taken please try another',
-                  'danger')
-            return redirect(url_for('profile'))
-    return render_template(
-        'other_profile.html',
-        user=user,
-        form=form)
+# @app.route("/profile/<user_id>", methods=['GET', 'POST'])
+# @login_required
+# def other_profile(user_id):
+#     user = User.query.filter_by(id=user_id).first()
+#     form = InviteToChat()
+#     if form.validate_on_submit():  # create chat button
+#         chatname = db.session.query(AllGroupChats.id).filter_by(
+#             chatname=form.chatname.data).first() is not None
+#         if chatname is False:
+#             file = "pickles/" + form.chatname.data + "-userslist.p"
+#             f = open(file, "w+")
+#             f.close()
+#             with open(file, 'wb') as handle:
+#                 pickle.dump([current_user.id], handle)
+#                 print("created pickle")
+#             private = request.form.get('Private')
+#             if private == 'on':
+#                 private = True
+#             else:
+#                 private = False
+#             chat = AllGroupChats(
+#                 chatname=form.chatname.data,
+#                 display_name=form.display_name.data,
+#                 description=form.description.data,
+#                 private=private,
+#                 users_list=file,
+#                 num_users=1,
+#                 time_created=datetime.now(),
+#                 owner=current_user.id)
+#             db.session.add(chat)
+#             db.session.commit()
+#             with open(current_user.chats, 'rb') as handle:
+#                 users_chat_list = pickle.load(handle)
+#                 users_chat_list.append(chat.id)
+#                 with open(current_user.chats, 'wb') as handle:
+#                     pickle.dump(users_chat_list, handle)
+#             flash(f'Chat: {form.chatname.data} has been created!', 'success')
+#             return redirect(url_for('profile'))
+#         else:
+#             flash(f'Chat name: "{form.chatname.data}" is already taken please try another',
+#                   'danger')
+#             return redirect(url_for('profile'))
+#     return render_template(
+#         'other_profile.html',
+#         user=user,
+#         form=form)
 
 
 
@@ -331,7 +336,6 @@ def leave_chat(user_id, chat_id):
             with open(file, 'wb') as handle:
                 pickle.dump(chat_users_list, handle)
         else:
-            else:
             flash(f'You are not in the chat: "{chat.display_name}".',
                   'danger')
 
@@ -369,7 +373,7 @@ def join_chat(user_id, chat_id):
 
 
 
-@app.route("/<chat_id>")
+@app.route("/<chat_id>", methods=["GET", "POST"])
 @login_required
 def chat(chat_id):
     form = SendMessage()
@@ -411,37 +415,36 @@ def chat(chat_id):
         db.session.commit()
         print("commited message")
     return render_template(
-        'chats.html',
-        chat_id=chat_id,
-        name=current_user.username)
+        'chats.html', chatname=chatname,
+        chat_id=chat_id, form=form)
 
-# MUST FIX MUST FIX
+# I presume this is wrong
+# @app.route("/edit_profile", methods=['POST', 'GET'])
+# @login_required
+# def edit_profile():
+#     imgur = ''
+#     if request.method == 'POST':
+#         f = request.files['files']
+#         print(f)
+#         print(type(f))
+#         filename = secure_filename(f.filename)
+#         print(filename)
+#         f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+#         imgur = upload_img(filename)
+#         current_user.profile_pic = imgur
+#         db.session.commit()
+#         print(imgur)
+#         return render_template('edit_profile.html', profile_pic=imgur)
+# #         print(upload_img(f))
+# #         print(type(profile_picture))
+# #         if profile_picture is not None:
+# #             print(profile_picture)
+#     return render_template('edit_profile.html', profile_pic=imgur)
+
+
 @app.route("/edit_profile", methods=['POST', 'GET'])
 @login_required
 def edit_profile():
-    imgur = ''
-    if request.method == 'POST':
-        f = request.files['files']
-        print(f)
-        print(type(f))
-        filename = secure_filename(f.filename)
-        print(filename)
-        f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        imgur = upload_img(filename)
-        current_user.profile_pic = imgur
-        db.session.commit()
-        print(imgur)
-        return render_template('edit_profile.html', profile_pic=imgur)
-#         print(upload_img(f))
-#         print(type(profile_picture))
-#         if profile_picture is not None:
-#             print(profile_picture)
-    return render_template('edit_profile.html', profile_pic=imgur)
-
-
-@app.route("/edit_profile", methods=['POST', 'GET'])
-@login_required
-def CORRECT_edit_profile():
     imgur = ''
     if request.method == 'POST':
         f = request.files['files']
