@@ -1,4 +1,5 @@
 $(function(){
+    
     var $publicChats = $('#public-chats');
     var $privateChats = $('#private-chats')
     var $user_id = $('#hidden-user-id').text()
@@ -20,7 +21,7 @@ $(function(){
     
     $.ajax({
         type: 'GET',
-        url: '/api/profile/PrivateChats/' + $user_id,
+        url: '/api/PublicChats/' + $user_id,
         success: function(privateChats) {
             $.each(privateChats, function(i, chat) {
                 $privateChats.append('<div class="jumbotron">' +

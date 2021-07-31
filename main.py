@@ -506,7 +506,7 @@ def getUserChats(user_id, private):
     return jsonify(chats_array)
 
 
-@app.route("/api/PublicChats")
+@app.route("/api/profile/PublicChats/all")
 def allPublicChats():
     chats = AllGroupChats.query.filter_by(private=False).all()
     chats_array = []
@@ -514,14 +514,17 @@ def allPublicChats():
         chatObj = {}
         chatObj['id'] = chat.id
         chatObj['chatname'] = chat.chatname
+        chatObj['display_name'] = chat.display_name
         with open(chat.users_list, 'rb') as handle:
             chatObj['users_list'] = pickle.load(handle)
         chatObj['num_users'] = chat.num_users
         chatObj['private'] = chat.private
         chatObj['time_created'] = chat.time_created
         chatObj['description'] = chat.description
-        chatObj['owner'] = chat.owner
+        owner = User.query.filter_by(id=chat.owner).first()
+        chatObj['owner'] = owner.username
         chats_array.append(chatObj)
+    chats_array = sorted(chats_array, key = lambda x: x['num_users'],reverse=True)
     return jsonify(chats_array)
 
 # MIGHT DELETE -- UNSURE WHAT GOAL IS HERE -- disregard this message

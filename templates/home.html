@@ -1,9 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<ul id="userdata"></ul>
 <h1> Popular Group Chats </h1>
-<div class="jumbotron">
+<div id="hidden-user-id" hidden>all</div>
+<div id="public-chats"></div>
+<!--<div class="jumbotron">
   <h1 class="display-4">[chat name]</h1>
   <p class="lead">[chat description]</p>
   <hr class="my-4">
@@ -20,6 +21,6 @@
   <p class="lead">
     <a class="btn btn-primary btn-lg" href="#" role="button">join</a>
   </p>
-</div>
+</div>-->
 
 {% endblock content %}
