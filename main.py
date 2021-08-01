@@ -428,7 +428,7 @@ def chat(chat_id):
             print(gif)
             form.msg.data = gif
         elif '/sticker' in form.msg.data:
-            keyword = form.msg.data[7:]
+            keyword = form.msg.data[9:]
             print(keyword)
             sticker_url = build_url('stickers', keyword)
             json = get_results(sticker_url)
