@@ -13,7 +13,7 @@ $(function(){
                 '<p class="lead">[' + chat.description + ']</p>' +
                 '<hr class="my-4">' +
                 '<p>' + chat.num_users + ' members<br> [owner] ' + chat.owner + '<br> [chat code] ' + chat.chatname + '</p>' +
-                '<p class="lead"><a class="btn btn-primary btn-lg" href="/' + chat.id + '" role="button">[join]</a></p>' +
+                '<p class="lead"><a class="btn btn-primary btn-lg" href="/' + chat.id + '" role="button">join</a></p>' +
                 '</div>');
             });
         }
@@ -29,7 +29,7 @@ $(function(){
                 '<p class="lead">[' + chat.description + ']</p>' +
                 '<hr class="my-4">' +
                 '<p>' + chat.num_users + ' members<br> [owner] ' + chat.owner + '<br> [chat code] ' + chat.chatname + '</p>' +
-                '<p class="lead"><a class="btn btn-primary btn-lg" href="/' + chat.id + '" role="button">[join]</a></p>' +
+                '<p class="lead"><a class="btn btn-primary btn-lg" href="/' + chat.id + '" role="button">join</a></p>' +
                 '</div>');
             });
         }
