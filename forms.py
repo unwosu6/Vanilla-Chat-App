@@ -30,22 +30,22 @@ class LoginForm(FlaskForm):
 
 class NewChat(FlaskForm):
     # must make it so that chatname is unique
-    chatname = StringField('[Chat Code]',
+    chatname = StringField('[chat code]',
                            validators=[DataRequired(), Length(min=1, max=120)])
     display_name = StringField(
-        '[Display Name of Chat]', validators=[
+        '[display name of chat]', validators=[
             DataRequired(), Length(
                 min=1, max=120)])
     description = TextAreaField(
-        '[Description]', validators=[
+        '[description]', validators=[
             DataRequired(), Length(
                 min=1, max=120)])
     private = BooleanField()
-    submit = SubmitField('[Create]')
+    submit = SubmitField('create chat')
 
 
 class InviteToChat(FlaskForm):
-    chatname = SelectField('Select Chat', coerce=int)
+    chatname = SelectField('[select chat]', coerce=int)
     submit = SubmitField('invite')
 
 
