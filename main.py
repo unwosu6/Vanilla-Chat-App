@@ -12,6 +12,7 @@ from imgur import upload_img
 from youtube import get_search_results, extract_info_json, video_url
 from werkzeug.utils import secure_filename
 from datetime import datetime
+from giphy import build_url, get_results, parse_json
 import os
 
 
@@ -418,6 +419,22 @@ def chat(chat_id):
             print(url)
             form.msg.data = url
             print('true')
+        elif '/giphy' in form.msg.data:
+            keyword = form.msg.data[7:]
+            print(keyword)
+            gif_url = build_url('gifs', keyword)
+            json = get_results(gif_url)
+            gif = parse_json(json)
+            print(gif)
+            form.msg.data = gif
+        elif '/sticker' in form.msg.data:
+            keyword = form.msg.data[7:]
+            print(keyword)
+            sticker_url = build_url('stickers', keyword)
+            json = get_results(sticker_url)
+            sticker = parse_json(json)
+            print(sticker)
+            form.msg.data = sticker
         msg = Message(
             chat_id=chat_id,
             user_sent_id=current_user.id,
