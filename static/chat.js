@@ -11,7 +11,7 @@ $(function(){
                     if (msg.content.includes("https://www.youtube.com/embed/")){
                         $allMessages.append(
                         '<div class="incoming_msg">' +
-                        '<div class="incoming_msg_img"> <img src="' + msg.user_sent_pfp + '" alt="user-profie-pic"> </div>' +
+                        '<div class="incoming_msg_img"> <a href="/profiles/' + msg.user_sent_id + '"><img src="' + msg.user_sent_pfp + '" alt="user-profie-pic"></a> </div>' +
                         '<div class="received_msg">' +
                         '<div class="received_withd_msg">' +
                         '<iframe width="560" height="315" src=' + msg.content + ' frameborder="0" allowfullscreen></iframe>' +
@@ -21,7 +21,7 @@ $(function(){
                     } else if (msg.content.includes("https://giphy.com/embed/")){
                         $allMessages.append(
                         '<div class="incoming_msg">' +
-                        '<div class="incoming_msg_img"> <img src="' + msg.user_sent_pfp + '" alt="user-profie-pic"> </div>' +
+                        '<div class="incoming_msg_img"> <a href="/profiles/' + msg.user_sent_id + '"><img src="' + msg.user_sent_pfp + '" alt="user-profie-pic"></a> </div>' +
                         '<div class="received_msg">' +
                         '<div class="received_withd_msg">' +
                         '<img src="' + msg.content + '" alt="Red dot" />' +
@@ -31,7 +31,7 @@ $(function(){
                     } else {
                         $allMessages.append(
                         '<div class="incoming_msg">' +
-                        '<div class="incoming_msg_img"> <img src="' + msg.user_sent_pfp + '" alt="user-profie-pic"> </div>' +
+                        '<div class="incoming_msg_img"> <a href="/profiles/' + msg.user_sent_id + '"><img src="' + msg.user_sent_pfp + '" alt="user-profie-pic"></a> </div>' +
                         '<div class="received_msg">' +
                         '<div class="received_withd_msg">' +
                         '<p>' + msg.content + '</p>' +
