@@ -8,6 +8,11 @@ $(function(){
         success: function(allMessages) {
             $.each(allMessages, function(i, msg) {
                 if (msg.user_sent_id != $user_id) {
+                    if (msg.content.includes("https://www.youtube.com/embed/")){
+                        
+                    } else{
+                        
+                    }
                     $allMessages.append(
                         '<div class="incoming_msg">' +
                         '<div class="incoming_msg_img"> <img src="' + msg.user_sent_pfp + '" alt="user-profie-pic"> </div>' +

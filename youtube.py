@@ -45,4 +45,4 @@ def print_result():
 
 
 # Remove this testing function later when implemented into main.py
-print_result()
+# print_result()

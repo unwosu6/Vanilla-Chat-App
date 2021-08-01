@@ -9,6 +9,7 @@ from flask_login import UserMixin, LoginManager, login_user, logout_user, \
 from flask_bcrypt import Bcrypt
 import pickle
 from imgur import upload_img
+from youtube import get_search_results, extract_info_json, video_url
 from werkzeug.utils import secure_filename
 from datetime import datetime
 import os
@@ -407,6 +408,17 @@ def chat(chat_id):
 
     if form.validate_on_submit():  # send message button
         print('validate')
+        if '/youtube' in form.msg.data:
+            api_key = "AIzaSyBGkGFRJ1Lzdsizug87FXPAl-yLuOjucdU"
+            keyword = form.msg.data[9:]
+            print(keyword)
+            results = get_search_results(api_key, keyword)
+            video_id = extract_info_json(results)
+            url = video_url(video_id)
+            print(url)
+            form.msg.data = url
+            print('true')
+            
         msg = Message(
             chat_id=chat_id,
             user_sent_id=current_user.id,
