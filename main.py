@@ -231,7 +231,7 @@ def other_profile(user_id):
         return render_template(
             'other_profile.html',
             user=user, form=form,
-            name=user.username, 
+            name=user.username,
             current_user=current_user)
     return render_template('home.html')
 
@@ -528,14 +528,14 @@ def sharedPrivateChats(user_id, other_user_id):
     chats_array = []
     # load the user's public/private chat list
     with open(user.chats, 'rb') as handle, \
-    open(other_user.chats, 'rb') as other_handle:
+            open(other_user.chats, 'rb') as other_handle:
         public_chat_list = pickle.load(handle)
         other_user_public_chat_list = pickle.load(other_handle)
         chats = AllGroupChats.query.filter_by(private=True).all()
         # load chats from all chats table
         for chat in chats:
             if chat.id in public_chat_list \
-            and chat.id in other_user_public_chat_list:
+                    and chat.id in other_user_public_chat_list:
                 chatObj = {}
                 chatObj['id'] = chat.id
                 chatObj['chatname'] = chat.chatname
