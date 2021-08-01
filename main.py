@@ -418,7 +418,6 @@ def chat(chat_id):
             print(url)
             form.msg.data = url
             print('true')
-            
         msg = Message(
             chat_id=chat_id,
             user_sent_id=current_user.id,
