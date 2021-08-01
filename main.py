@@ -411,9 +411,9 @@ def chat(chat_id):
         form_name = ""
         if 'form-name' in request.form:
             form_name = request.form['form-name']
-        if form_name == 'leave':
+        if form_name == 'remove chat from profile':
             leave_chat(current_user.id, chat_id)
-        if form_name == 'become member':
+        if form_name == 'add chat to profile':
             join_chat(current_user.id, chat_id)
 
     if form.validate_on_submit():  # send message button
