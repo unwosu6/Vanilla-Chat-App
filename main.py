@@ -91,12 +91,18 @@ class Message(db.Model):
     def __repr__(self):
         return f"Message('{self.content}', '{self.time_sent}')"
 
-
+@app.route("/")
 @app.route("/home")
-@login_required
 def home():
+    if not current_user.is_authenticated:
+        #Anonymous user
+        print("HELLOOOO")
+        return redirect(url_for('welcome'))
     return render_template('home.html')
 
+@app.route("/welcome")
+def welcome():
+    return render_template('welcome.html')
 
 @app.route("/about")
 def about():

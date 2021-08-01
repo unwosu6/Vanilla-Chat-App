@@ -1,5 +1,6 @@
 :root {
   --background: #2a1f0f;
+  --backgroundMocha: #302925;
   --button: #3d951d;
   --yellow: #FECF72;
   --element: #F5ECD5;
@@ -307,6 +308,28 @@ img {max-width: 100%;}
     width = 180px;
     text-align: center;
     display: inline-block;
+}
+
+/*----- Welcome -----*/
+
+.bigTitle {
+    font-size: 4rem;
+}
+
+.lightText {
+    color: #fff;
+}
+
+.imgDropShadow {
+    -webkit-filter: drop-shadow(5px 5px 5px #242120);
+}
+
+.mochaBackground {
+    background: var(--backgroundMocha);
+}
+
+.bg-tan {
+    background-color: #403634;
 }
 
 footer {

@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+               <div class="alert alert-{{ category }}">
+                 {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+{% block chats %}
+<body class="mochaBackground">
+       <div class="container col-xxl-10 px-4 py-5 imgDropShadow mochaBackground shadow-lg p-3 mb-5 bg-tan rounded">
+           <div class="row align-items-center g-5 py-5">
+               <div class="col-lg-6">
+                   <h1 class="display-5 fw-bold lh-1 mb-3 bigTitle">Discover new connections.</h1>
+                   <p class="lead lightText">No likes. No popularity contests. Just human connection. Vanilla provides a safe, positive way to interact with those with similar interests.</p>
+                   <div class="d-grid gap-2 d-md-flex justify-content-md-start mb-4 mb-lg-3">
+                       <a href="/register"><button type="button" class="btn btn-primary btn-lg">Register Today</button></a>
+                   </div>
+               </div>
+               <div class="col-10 col-sm-8 col-lg-6">
+                   <img class="d-block mx-lg-auto img-fluid imgDropShadow" src="/static/laptop_screen.png" alt="Chat Example Picture" width="720">
+               </div>
+           </div>
+       </div>
+</body>      
+{% endblock chats %}
