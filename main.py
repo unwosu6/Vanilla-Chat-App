@@ -231,7 +231,8 @@ def other_profile(user_id):
         return render_template(
             'other_profile.html',
             user=user, form=form,
-            name=user.username)
+            name=user.username,
+            current_user=current_user)
     return render_template('home.html')
 
 # MUST FIX MUST FIX
@@ -519,12 +520,47 @@ def userPrivateChats(user_id):
     return getUserChats(user_id, True)
 
 
+@app.route("/api/profile/PrivateChats/<user_id>/<other_user_id>")
+def sharedPrivateChats(user_id, other_user_id):
+    # get both users' data
+    user = User.query.filter_by(id=user_id).first()
+    other_user = User.query.filter_by(id=other_user_id).first()
+    chats_array = []
+    # load the user's public/private chat list
+    with open(user.chats, 'rb') as handle, \
+            open(other_user.chats, 'rb') as other_handle:
+        public_chat_list = pickle.load(handle)
+        other_user_public_chat_list = pickle.load(other_handle)
+        chats = AllGroupChats.query.filter_by(private=True).all()
+        # load chats from all chats table
+        for chat in chats:
+            if chat.id in public_chat_list \
+                    and chat.id in other_user_public_chat_list:
+                chatObj = {}
+                chatObj['id'] = chat.id
+                chatObj['chatname'] = chat.chatname
+                chatObj['display_name'] = chat.display_name
+                with open(chat.users_list, 'rb') as handle:
+                    chatObj['users_list'] = pickle.load(handle)
+                chatObj['num_users'] = chat.num_users
+                chatObj['private'] = chat.private
+                chatObj['time_created'] = chat.time_created
+                chatObj['description'] = chat.description
+                owner = User.query.filter_by(id=chat.owner).first()
+                chatObj['owner'] = owner.username
+                chats_array.append(chatObj)
+    return jsonify(chats_array)
+
+
 def getUserChats(user_id, private):
+    # get the user data
     user = User.query.filter_by(id=user_id).first()
     chats_array = []
+    # load the user's public/private chat list
     with open(user.chats, 'rb') as handle:
         public_chat_list = pickle.load(handle)
         chats = AllGroupChats.query.filter_by(private=private).all()
+        # load chats from all chats table
         for chat in chats:
             if chat.id in public_chat_list:
                 chatObj = {}

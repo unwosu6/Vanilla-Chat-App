@@ -88,7 +88,10 @@
             <div class="col-md-6 justify-content-center">
                 <div class="hero-body">
                     <div class="container has-text-centered">
-                        <h1 class="fixed">Shared Chats</h1>
+                        <h1 class="fixed">Shared Private Chats</h1>
+                        <div id="hidden-other-user-id" hidden>{{ current_user.id }}</div>
+                        <div id="hidden-user-id" hidden>{{ user.id }}</div>
+                        <div id="shared-private-chats"></div>
                     </div>
                     
                     <div class="container has-text-centered">
