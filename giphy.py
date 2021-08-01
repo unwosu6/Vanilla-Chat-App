@@ -57,4 +57,4 @@ def print_test():
     print(sticker)
 
 
-print_test()
+# print_test()
