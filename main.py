@@ -100,6 +100,7 @@ def home():
         return redirect(url_for('welcome'))
     return render_template('home.html')
 
+
 @app.route("/welcome")
 def welcome():
     return render_template('welcome.html')
