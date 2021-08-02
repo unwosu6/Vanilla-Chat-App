@@ -451,14 +451,16 @@ def chat(chat_id):
             content=form.msg.data)
         db.session.add(msg)
         db.session.commit()
+        form.msg.data = ""
+        # return redirect(url_for())
 
     return render_template(
         'chats.html', chatname=chatname,
         chat_id=chat_id, form=form)
 
 
-@app.route("/edit_chat/<chat_id>", methods=['GET', 'POST'])
-@login_required
+@ app.route("/edit_chat/<chat_id>", methods=['GET', 'POST'])
+@ login_required
 def edit_chat(chat_id):
     chat = AllGroupChats.query.get(int(chat_id))
     thisChatname = chat.chatname
@@ -511,8 +513,8 @@ def edit_chat(chat_id):
 #     return render_template('edit_profile.html', profile_pic=imgur)
 
 
-@app.route("/edit_profile", methods=['POST', 'GET'])
-@login_required
+@ app.route("/edit_profile", methods=['POST', 'GET'])
+@ login_required
 def edit_profile():
     imgur = ''
     if request.method == 'POST':
@@ -541,17 +543,17 @@ def edit_profile():
     return render_template('edit_profile.html', current_user=current_user)
 
 
-@app.route("/api/profile/PublicChats/<user_id>")
+@ app.route("/api/profile/PublicChats/<user_id>")
 def usersPublicChats(user_id):
     return getUserChats(user_id, False)
 
 
-@app.route("/api/profile/PrivateChats/<user_id>")
+@ app.route("/api/profile/PrivateChats/<user_id>")
 def userPrivateChats(user_id):
     return getUserChats(user_id, True)
 
 
-@app.route("/api/profile/PrivateChats/<user_id>/<other_user_id>")
+@ app.route("/api/profile/PrivateChats/<user_id>/<other_user_id>")
 def sharedPrivateChats(user_id, other_user_id):
     # get both users' data
     user = User.query.filter_by(id=user_id).first()
@@ -612,7 +614,7 @@ def getUserChats(user_id, private):
     return jsonify(chats_array)
 
 
-@app.route("/api/profile/PublicChats/all")
+@ app.route("/api/profile/PublicChats/all")
 def allPublicChats():
     chats = AllGroupChats.query.filter_by(private=False).all()
     chats_array = []
@@ -640,7 +642,7 @@ def allPublicChats():
 # MIGHT DELETE -- UNSURE WHAT GOAL IS HERE -- disregard this message
 
 
-@app.route("/api/chat/<chat_id>/messages")
+@ app.route("/api/chat/<chat_id>/messages")
 def allMessagesInChat(chat_id):
     msgs = Message.query.filter_by(chat_id=chat_id).all()
     chat_array = []
@@ -664,7 +666,7 @@ def allMessagesInChat(chat_id):
     return jsonify(chat_array)
 
 
-@app.route("/api/chat/<chat_id>/users")
+@ app.route("/api/chat/<chat_id>/users")
 def allActiveUsersInChat(chat_id):
     # we can figure this out later
     users = AllGroupChats.query.filter_by(id=chat_id).first()
@@ -686,7 +688,7 @@ def allActiveUsersInChat(chat_id):
     return jsonify(user_array)
 
 
-@app.route("/api/AllUsers")
+@ app.route("/api/AllUsers")
 def allUsers():
     # we can figure this out later
     users = User.query.all()
@@ -708,7 +710,7 @@ def allUsers():
     return jsonify(user_array)
 
 
-@app.route("/api/User/<get_user>")
+@ app.route("/api/User/<get_user>")
 def userdata(get_user):
     user = User.query.filter_by(id=get_user).first()
     userObj = {}
