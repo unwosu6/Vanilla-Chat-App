@@ -451,8 +451,8 @@ def chat(chat_id):
             content=form.msg.data)
         db.session.add(msg)
         db.session.commit()
-        num = chat_id
-        return redirect(url_for('/'+chat_id))
+        form.msg.data = ""
+        # return redirect(url_for())
 
     return render_template(
         'chats.html', chatname=chatname,
