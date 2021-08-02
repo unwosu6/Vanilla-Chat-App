@@ -63,3 +63,18 @@ class BecomeMember(FlaskForm):
 
 class Leave(FlaskForm):
     submit = SubmitField('Leave')
+
+
+class EditChat(FlaskForm):
+    display_name = StringField(
+        '[display name of chat]', validators=[
+            DataRequired(), Length(
+                min=1, max=120)])
+    description = TextAreaField(
+        '[description]', validators=[
+            DataRequired(), Length(
+                min=1, max=120)])
+    owner = SelectField('[select new owner]', coerce=int)
+    user = SelectField('[select user to remove]', coerce=int)
+    submit = SubmitField('save changes')
+
