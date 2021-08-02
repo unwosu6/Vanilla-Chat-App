@@ -1,4 +1,4 @@
-$(function(){
+setInterval(function(){
     var $allMessages = $('#all-msgs')
     var $user_id = $('#hidden-user-id').text()
     var $chat_id = $('#hidden-chat-id').text()
@@ -69,4 +69,4 @@ $(function(){
              });
         }
     });
-});
+}500);
