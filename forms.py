@@ -77,4 +77,3 @@ class EditChat(FlaskForm):
     owner = SelectField('[select new owner]', coerce=int)
     user = SelectField('[select user to remove]', coerce=int)
     submit = SubmitField('save changes')
-

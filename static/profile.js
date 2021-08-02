@@ -5,13 +5,13 @@ $(function(){
     var $sharedPrivateChats = $('#shared-private-chats');
     var $user_id = $('#hidden-user-id').text();
     var $other_user_id = $('#hidden-other-user-id').text();
-    var $current_user = $('#hidden-curr-user-id').text();
+    var $current_user_id = $('#hidden-curr-user-id').text();
     $.ajax({
         type: 'GET',
         url: '/api/profile/PublicChats/' + $user_id,
         success: function(publicChats) {
             $.each(publicChats, function(i, chat) {
-                if (chat.owner_id == $current_user) {
+                if (chat.owner_id == $current_user_id) {
                     $publicChats.append('<div class="jumbotron">' +
                     '<h1 class="display-4">[' + chat.display_name + ']</h1>' +
                     '<p class="lead">[' + chat.description + ']</p>' +
@@ -38,7 +38,7 @@ $(function(){
         url: '/api/profile/PrivateChats/' + $user_id,
         success: function(privateChats) {
             $.each(privateChats, function(i, chat) {
-                if (chat.owner_id == $current_user) {
+                if (chat.owner_id == $current_user_id) {
                     $publicChats.append('<div class="jumbotron">' +
                     '<h1 class="display-4">[' + chat.display_name + ']</h1>' +
                     '<p class="lead">[' + chat.description + ']</p>' +
@@ -62,10 +62,10 @@ $(function(){
     
     $.ajax({
         type: 'GET',
-        url: '/api/profile/PrivateChats/' + $user_id + "/" + $other_user_id,
+        url: '/api/profile/PrivateChats/' + $user_id + "/" + $current_user_id,
         success: function(sharedPrivateChats) {
             $.each(sharedPrivateChats, function(i, chat) {
-                if (chat.owner_id == $current_user) {
+                if (chat.owner_id == $current_user_id) {
                     $publicChats.append('<div class="jumbotron">' +
                     '<h1 class="display-4">[' + chat.display_name + ']</h1>' +
                     '<p class="lead">[' + chat.description + ']</p>' +

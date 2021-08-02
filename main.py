@@ -98,7 +98,7 @@ def home():
     if not current_user.is_authenticated:
         # Anonymous user
         return redirect(url_for('welcome'))
-    return render_template('home.html')
+    return render_template('home.html', current_user=current_user)
 
 
 @app.route("/welcome")
@@ -330,7 +330,7 @@ def profile():
     return render_template(
         'profile.html',
         name=current_user.username,
-        form=form)
+        form=form, current_user=current_user)
 
 
 def leave_chat(user_id, chat_id):
@@ -486,7 +486,7 @@ def edit_chat(chat_id):
         return render_template(
             'edit_chat.html',
             form=form, thisChatname=thisChatname)
-    return render_template('home.html')
+    return render_template('home.html', current_user=current_user)
 # I presume this is wrong
 # @app.route("/edit_profile", methods=['POST', 'GET'])
 # @login_required
