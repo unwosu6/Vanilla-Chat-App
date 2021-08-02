@@ -54,7 +54,7 @@ class SendMessage(FlaskForm):
         'message', validators=[
             DataRequired(), Length(
                 min=1, max=240)])
-    submit = SubmitField('send')
+    submit2 = SubmitField('send')
 
 
 class BecomeMember(FlaskForm):
