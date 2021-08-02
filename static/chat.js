@@ -31,7 +31,7 @@ $(function(){
                     } else {
                         $allMessages.append(
                         '<div class="incoming_msg">' +
-                        '<div class="incoming_msg_img"> <a href="/profiles/' + msg.user_sent_id + '"><img src="' + msg.user_sent_pfp + '" alt="user-profie-pic"></a> </div>' +
+                        '<div class="incoming_msg_img"> <a href="/profiles/' + msg.user_sent_id + '"><img src="' + msg.user_sent_pfp + '" alt="user-profie-pic" class="rounded-circle"></a> </div>' +
                         '<div class="received_msg">' +
                         '<div class="received_withd_msg">' +
                         '<p>' + msg.content + '</p>' +
