@@ -19,7 +19,7 @@
 <div class="row align-items-start">
   
     <div class="col-md-6 justify-content-center">
-
+    <div class="content-section">
         <form action="#" method="post" enctype="multipart/form-data" id='upload'>
             <div id="profile-pic">
                     <img src="{{ current_user.profile_pic }}" class="rounded-circle" alt="Profile Picture"> 
@@ -32,9 +32,9 @@
             <label for="bio">Change Bio:</label><br>
             <textarea id="bio" name="bio" rows="5" cols="30" wrap="soft" maxlength="600" method="post">{{ current_user.bio }}</textarea>
             <br>
-            <input type = "submit" value = "Save Changes" id = "submit"/>
+            <input class="btn btn-primary btn-lg" type = "submit" value = "Save Changes" id = "submit"/>
         </form>
-        
+    </div> 
     </div>    
 
 </div>   
