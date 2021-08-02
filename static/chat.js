@@ -24,7 +24,7 @@ $(function(){
                         '<div class="incoming_msg_img"> <a href="/profiles/' + msg.user_sent_id + '"><img src="' + msg.user_sent_pfp + '" alt="user-profie-pic"></a> </div>' +
                         '<div class="received_msg">' +
                         '<div class="received_withd_msg">' +
-                        '<img src="' + msg.content + '" alt="Red dot" />' +
+                        '<iframe src="' + msg.content + '" width="480" height="270" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>' +
                         '<span class="time_date">' + msg.user_sent_display_name + '    |    ' + msg.time + '    |    ' + msg.date + '</span></div>' +
                         '</div></div>'
                     );
