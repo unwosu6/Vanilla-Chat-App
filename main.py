@@ -1,7 +1,7 @@
 from flask import Flask, render_template, url_for, flash, redirect, request, \
     jsonify
 from forms import RegistrationForm, LoginForm, NewChat, SendMessage, \
-    BecomeMember, Leave, InviteToChat
+    BecomeMember, Leave, InviteToChat, EditChat
 from flask_sqlalchemy import SQLAlchemy
 from flask_behind_proxy import FlaskBehindProxy
 from flask_login import UserMixin, LoginManager, login_user, logout_user, \
@@ -98,7 +98,7 @@ def home():
     if not current_user.is_authenticated:
         # Anonymous user
         return redirect(url_for('welcome'))
-    return render_template('home.html')
+    return render_template('home.html', current_user=current_user)
 
 
 @app.route("/welcome")
@@ -330,7 +330,7 @@ def profile():
     return render_template(
         'profile.html',
         name=current_user.username,
-        form=form)
+        form=form, current_user=current_user)
 
 
 def leave_chat(user_id, chat_id):
@@ -456,6 +456,37 @@ def chat(chat_id):
         'chats.html', chatname=chatname,
         chat_id=chat_id, form=form)
 
+
+@app.route("/edit_chat/<chat_id>", methods=['GET', 'POST'])
+@login_required
+def edit_chat(chat_id):
+    chat = AllGroupChats.query.get(int(chat_id))
+    thisChatname = chat.chatname
+    if chat:
+        # create list of current chat's users to remove or make owner
+        chats_users = []
+        with open(chat.users_list, 'rb') as handle:
+            chats_users_list = pickle.load(handle)
+            for user_id in chats_users_list:
+                user = User.query.get(user_id)
+                chats_users.append((user.id, user.username))
+        form = EditChat()
+        form.owner.choices = chats_users
+        form.user.choices = chats_users
+        if form.validate_on_submit():
+            bad_user_id = form.user.data
+            leave_chat(bad_user_id, chat_id)
+            owner_user_id = form.owner.data
+            chat.owner = owner_user_id
+            chat.description = form.description.data
+            chat.display_name = form.display_name.data
+            db.session.commit()
+            flash(f'Chat Updated!', 'success')
+            return redirect(url_for('profile'))
+        return render_template(
+            'edit_chat.html',
+            form=form, thisChatname=thisChatname)
+    return render_template('home.html', current_user=current_user)
 # I presume this is wrong
 # @app.route("/edit_profile", methods=['POST', 'GET'])
 # @login_required
@@ -548,6 +579,7 @@ def sharedPrivateChats(user_id, other_user_id):
                 chatObj['description'] = chat.description
                 owner = User.query.filter_by(id=chat.owner).first()
                 chatObj['owner'] = owner.username
+                chatObj['owner_id'] = chat.owner
                 chats_array.append(chatObj)
     return jsonify(chats_array)
 
@@ -575,6 +607,7 @@ def getUserChats(user_id, private):
                 chatObj['description'] = chat.description
                 owner = User.query.filter_by(id=chat.owner).first()
                 chatObj['owner'] = owner.username
+                chatObj['owner_id'] = chat.owner
                 chats_array.append(chatObj)
     return jsonify(chats_array)
 
@@ -596,6 +629,7 @@ def allPublicChats():
         chatObj['description'] = chat.description
         owner = User.query.filter_by(id=chat.owner).first()
         chatObj['owner'] = owner.username
+        chatObj['owner_id'] = chat.owner
         chats_array.append(chatObj)
     chats_array = sorted(
         chats_array,
