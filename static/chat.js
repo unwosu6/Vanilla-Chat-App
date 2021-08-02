@@ -1,4 +1,4 @@
-setInterval(function(){
+$(setInterval(function(){
     var $allMessages = $('#all-msgs')
     var $user_id = $('#hidden-user-id').text()
     var $chat_id = $('#hidden-chat-id').text()
@@ -6,6 +6,7 @@ setInterval(function(){
         type: 'GET',
         url: '/api/chat/' + $chat_id + '/messages',
         success: function(allMessages) {
+            $('#all-msgs').empty()
             $.each(allMessages, function(i, msg) {
                 if (msg.user_sent_id != $user_id) {
                     if (msg.content.includes("https://www.youtube.com/embed/")){
@@ -69,4 +70,5 @@ setInterval(function(){
              });
         }
     });
-}500);
+}, 1000)
+);
