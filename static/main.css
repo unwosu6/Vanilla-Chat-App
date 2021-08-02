@@ -332,6 +332,30 @@ img {max-width: 100%;}
     display: inline-block;
 }
 
+
+/*----- Chat Sidebar -----*/
+
+.sidebar {
+    width: 180px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 999;
+    background: #362919;
+    color: #fff;
+    transition: all 0.3s;
+}
+
+.green-nav {
+  background-color: #5ea644;    
+}
+
+.sidebar-link {
+  color: #fff;
+}
+
+
 /*----- Welcome -----*/
 
 .bigTitle {
