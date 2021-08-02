@@ -467,17 +467,21 @@ def edit_chat(chat_id):
     if chat:
         # create list of current chat's users to remove or make owner
         chats_users = []
+        chats_users_to_remove = [(0, '[do not remove anyone]')]
         with open(chat.users_list, 'rb') as handle:
             chats_users_list = pickle.load(handle)
             for user_id in chats_users_list:
                 user = User.query.get(user_id)
                 chats_users.append((user.id, user.username))
+                chats_users_to_remove.append((user.id, user.username))
+                print(chats_users_to_remove)
         form = EditChat()
         form.owner.choices = chats_users
-        form.user.choices = chats_users
+        form.user.choices = chats_users_to_remove
         if form.validate_on_submit():
-            bad_user_id = form.user.data
-            leave_chat(bad_user_id, chat_id)
+            if form.user.data != 0:
+                bad_user_id = form.user.data
+                leave_chat(bad_user_id, chat_id)
             owner_user_id = form.owner.data
             chat.owner = owner_user_id
             chat.description = form.description.data
