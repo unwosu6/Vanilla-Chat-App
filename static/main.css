@@ -5,6 +5,27 @@
   --yellow: #FECF72;
   --element: #F5ECD5;
   --navbar: #241805;
+   
+}
+
+.mesgs {
+    background-color: #f5ecd5;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+
+#msg {
+    border-bottom-left-radius: 15px;
+    border-top-left-radius: 0px;
+}
+
+#submit {
+    border-bottom-left-radius: 0px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 15px;
+
 }
 
 body {
@@ -168,7 +189,7 @@ height:70px;
 
 img {max-width: 100%;}
 		.inbox_msg {
-		  border: 1px solid #c4c4c4;
+		  background-color: var(--background);
 		  clear: both;
 		  overflow: hidden;
 		}
@@ -219,7 +240,7 @@ img {max-width: 100%;}
 		  width: 92%;
 		 }
 		 .received_withd_msg p {
-		  background: #e4e8fb none repeat scroll 0 0;
+		  background: var(--yellow) none repeat scroll 0 0;
 		  border-radius: 3px;
 		  color: #646464;
 		  font-size: 14px;
@@ -241,7 +262,7 @@ img {max-width: 100%;}
 		}
 
 		 .sent_msg p {
-		  background: #3F51B5 none repeat scroll 0 0;
+		  background: grey none repeat scroll 0 0;
 		  border-radius: 3px;
 		  font-size: 14px;
 		  margin: 0; color:#fff;
