@@ -6,7 +6,10 @@ $(setInterval(function(){
         type: 'GET',
         url: '/api/chat/' + $chat_id + '/messages',
         success: function(allMessages) {
-            $('#all-msgs').empty()
+            var total_msgs = Object.keys(allMessages).length;
+            var current = 27;
+            if(total_msgs != current){
+                $('#all-msgs').empty()
             $.each(allMessages, function(i, msg) {
                 if (msg.user_sent_id != $user_id) {
                     if (msg.content.includes("https://www.youtube.com/embed/")){
@@ -59,6 +62,7 @@ $(setInterval(function(){
                     );
                     } else{
                         $allMessages.append(
+                        
                         '<div class="outgoing_msg">' +
                         '<div class="sent_msg">' +
                         '<p>' + msg.content + '</p>' +
@@ -68,7 +72,12 @@ $(setInterval(function(){
                     }
                 }
              });
+            }
         }
     });
 }, 1000)
 );
+// $(document).ajaxStop(function(){
+//         window.location.reload();
+//     }
+// });
