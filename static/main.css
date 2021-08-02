@@ -301,6 +301,8 @@ img {max-width: 100%;}
 		.msg_history {
 		  max-height: 516px;
 		  overflow-y: scroll;
+          display: flex;
+          flex-direction: column-reverse;
 		}
 ::-webkit-scrollbar {
     width: 0;  /* Remove scrollbar space */
