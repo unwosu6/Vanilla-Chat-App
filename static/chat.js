@@ -68,7 +68,6 @@ $(setInterval(function(){
                     );
                     } else{
                         $allMessages.append(
-                            total_msgs + 'space' + current + 'space' + allMessages + 'space' + $allMessages +
                         '<div class="outgoing_msg">' +
                         '<div class="sent_msg">' +
                         '<p>' + msg.content + '</p>' +
