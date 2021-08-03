@@ -1,3 +1,7 @@
+var current;
+$(function(){
+    current = $('#hidden-chat-num').text()-1
+});
 $(setInterval(function(){
     var $allMessages = $('#all-msgs')
     var $user_id = $('#hidden-user-id').text()
@@ -7,9 +11,11 @@ $(setInterval(function(){
         url: '/api/chat/' + $chat_id + '/messages',
         success: function(allMessages) {
             var total_msgs = Object.keys(allMessages).length;
-            var current = 27;
+//             var current = Object.keys($allMessages).length;
+//             var current = $('#hidden-chat-num').text() + 1;
             if(total_msgs != current){
                 $('#all-msgs').empty()
+                current =  current + 1;
             $.each(allMessages, function(i, msg) {
                 if (msg.user_sent_id != $user_id) {
                     if (msg.content.includes("https://www.youtube.com/embed/")){
@@ -62,7 +68,7 @@ $(setInterval(function(){
                     );
                     } else{
                         $allMessages.append(
-                        
+                            total_msgs + 'space' + current + 'space' + allMessages + 'space' + $allMessages +
                         '<div class="outgoing_msg">' +
                         '<div class="sent_msg">' +
                         '<p>' + msg.content + '</p>' +

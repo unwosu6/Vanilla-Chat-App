@@ -406,6 +406,10 @@ def join_chat(user_id, chat_id):
 def chat(chat_id):
     form = SendMessage()
     chat = AllGroupChats.query.filter_by(id=chat_id).first()
+    chat_num = Message.query.all()
+    chat_num = len(chat_num)
+    chat_num = chat_num - 1
+    print(chat_num)
     chatname = chat.display_name
     if request.method == 'POST':
         form_name = ""
@@ -454,7 +458,7 @@ def chat(chat_id):
 
     return render_template(
         'chats.html', chatname=chatname,
-        chat_id=chat_id, form=form)
+        chat_id=chat_id, form=form,chat_num=chat_num)
 
 
 @app.route("/edit_chat/<chat_id>", methods=['GET', 'POST'])
