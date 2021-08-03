@@ -11,7 +11,7 @@ import pickle
 from imgur import upload_img
 from youtube import get_search_results, extract_info_json, video_url
 from werkzeug.utils import secure_filename
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from giphy import build_url, get_results, parse_json
 from pytz import timezone
 import pytz
@@ -50,6 +50,7 @@ class User(UserMixin, db.Model):
     profile_pic = db.Column(db.String(120), unique=False)
     Message = db.relationship("Message", backref="user", lazy=True)
     AllGroupChats = db.relationship("AllGroupChats", backref="user", lazy=True)
+    last_active = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.password}')"
@@ -139,7 +140,7 @@ def register():
                     email=form.email.data,
                     password=passwordhash,
                     display_name='',
-                    profile_pic=pfp,
+                    profile_pic='https://i.imgur.com/5UgSAH3.png',
                     bio='', chats=file)
                 db.session.add(user)
                 db.session.commit()
@@ -214,6 +215,12 @@ def other_profile(user_id):
     curr_user = load_user(current_user.id)
     if user:
         # create list of current user's private chats to invite the user to
+        now = datetime.utcnow()
+        print(user.profile_pic)
+        if (now-user.last_active) < timedelta(minutes=10) :
+            activity = 'status-circle'
+        else:
+            activity = 'status-circle-red'
         curr_user_private_chats = []
         with open(curr_user.chats, 'rb') as handle:
             curr_user_chats = pickle.load(handle)
@@ -234,7 +241,8 @@ def other_profile(user_id):
             'other_profile.html',
             user=user, form=form,
             name=user.username,
-            current_user=current_user)
+            current_user=current_user,
+            activity=activity)
     return render_template('home.html')
 
 # MUST FIX MUST FIX
@@ -737,6 +745,12 @@ def userdata(get_user):
         print('opened pickle object')
     userObj['profile_pic'] = user.profile_pic
     return jsonify(userObj)
+
+
+@app.before_request
+def update_last_active():
+    current_user.last_active = datetime.utcnow()
+    db.session.commit()
 
 
 if __name__ == '__main__':
