@@ -660,7 +660,7 @@ def allMessagesInChat(chat_id):
         user = User.query.filter_by(id=msg.user_sent_id).first()
         msgObj['user_sent_pfp'] = user.profile_pic
         msgObj['user_sent_username'] = user.username
-        #msgObj['user_sent_display_name'] = user.display_name
+        # msgObj['user_sent_display_name'] = user.display_name
         if user.display_name != "":
             msgObj['user_sent_display_name'] = user.display_name
         else:
