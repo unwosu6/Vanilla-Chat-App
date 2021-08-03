@@ -31,7 +31,13 @@
                         <div class="circle-block" style="float:left;">
                             <div class="{{activity}}"></div>
                         </div>
-                        <h3>Active</h3>      
+                        {% if not active %}
+                        <h3> inactive</h3> 
+                        {% endif %}
+                        {% if active %}
+                        <h3> active</h3> 
+                        {% endif %}
+                             
                     </div>
                     
                     <!-- Button trigger modal -->
