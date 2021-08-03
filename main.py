@@ -465,10 +465,13 @@ def chat(chat_id):
         db.session.add(msg)
         db.session.commit()
         form.msg.data = ""
-
+    chat_num = Message.query.all()
+    chat_num = len(chat_num)
+#     chat_num = chat_num - 1
+    print(chat_num)
     return render_template(
         'chats.html', chatname=chatname,
-        chat_id=chat_id, form=form)
+        chat_id=chat_id, form=form, chat_num=chat_num)
 
 
 @ app.route("/edit_chat/<chat_id>", methods=['GET', 'POST'])

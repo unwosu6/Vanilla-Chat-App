@@ -13,6 +13,8 @@ $(setInterval(function(){
             var total_msgs = Object.keys(allMessages).length;
 //             var current = Object.keys($allMessages).length;
 //             var current = $('#hidden-chat-num').text() + 1;
+            console.log(current)
+            console.log(total_msgs)
             if(total_msgs != current){
                 $('#all-msgs').empty()
                 current =  current + 1;
