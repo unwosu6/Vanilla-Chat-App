@@ -22,8 +22,12 @@ def extract_info_json(data):
             video_id = data['items'][0]['id']['videoId']
         except KeyError:
             video_id = data['items'][1]['id']['videoId']
-        except:
+        except KeyError:
             video_id = data['items'][2]['id']['videoId']
+        except KeyError:
+            video_id = data['items'][3]['id']['videoId']
+        except:
+            video_id = data['items'][4]['id']['videoId']
         return video_id
     else:
         return []
