@@ -458,7 +458,7 @@ def chat(chat_id):
 
     return render_template(
         'chats.html', chatname=chatname,
-        chat_id=chat_id, form=form,chat_num=chat_num)
+        chat_id=chat_id, form=form, chat_num=chat_num)
 
 
 @app.route("/edit_chat/<chat_id>", methods=['GET', 'POST'])
