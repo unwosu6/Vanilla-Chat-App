@@ -366,11 +366,11 @@ img {max-width: 100%;}
 
 .sidebar {
     width: 180px;
-    position: fixed;
+/*     position: fixed; */
     top: 0;
     left: 0;
-    height: 100vh;
-    z-index: 999;
+/*     height: 100vh; */
+    z-index: 1;
     background: #362919;
     color: #fff;
     transition: all 0.3s;
