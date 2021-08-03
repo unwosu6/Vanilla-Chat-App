@@ -468,17 +468,21 @@ def edit_chat(chat_id):
     if chat:
         # create list of current chat's users to remove or make owner
         chats_users = []
+        chats_users_to_remove = [(0, '[remove no one]')]
         with open(chat.users_list, 'rb') as handle:
             chats_users_list = pickle.load(handle)
             for user_id in chats_users_list:
                 user = User.query.get(user_id)
                 chats_users.append((user.id, user.username))
+                chats_users_to_remove.append((user.id, user.username))
         form = EditChat()
         form.owner.choices = chats_users
-        form.user.choices = chats_users
+        form.user.choices = chats_users_to_remove
+        # collect data that has been edited
         if form.validate_on_submit():
             bad_user_id = form.user.data
-            leave_chat(bad_user_id, chat_id)
+            if bad_user_id != 0:
+                leave_chat(bad_user_id, chat_id)
             owner_user_id = form.owner.data
             chat.owner = owner_user_id
             chat.description = form.description.data
@@ -656,7 +660,11 @@ def allMessagesInChat(chat_id):
         user = User.query.filter_by(id=msg.user_sent_id).first()
         msgObj['user_sent_pfp'] = user.profile_pic
         msgObj['user_sent_username'] = user.username
-        msgObj['user_sent_display_name'] = user.display_name
+        #msgObj['user_sent_display_name'] = user.display_name
+        if user.display_name != "":
+            msgObj['user_sent_display_name'] = user.display_name
+        else:
+            msgObj['user_sent_display_name'] = user.username
         eastern = timezone('US/Eastern')
         local_time = msg.time_sent.astimezone(eastern)
         time = local_time
