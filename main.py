@@ -140,7 +140,7 @@ def register():
                     email=form.email.data,
                     password=passwordhash,
                     display_name='',
-                    profile_pic=pfp,
+                    profile_pic='https://i.imgur.com/5UgSAH3.png',
                     bio='', chats=file)
                 db.session.add(user)
                 db.session.commit()
@@ -216,7 +216,7 @@ def other_profile(user_id):
     if user:
         # create list of current user's private chats to invite the user to
         now = datetime.utcnow()
-        print(now-user.last_active)
+        print(user.profile_pic)
         if (now-user.last_active) < timedelta(minutes=10) :
             activity = 'status-circle'
         else:
