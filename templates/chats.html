@@ -9,8 +9,61 @@
 <div id="hidden-chat-id" hidden>{{ chat_id }}</div>
 <div id="hidden-chat-num" hidden>{{ chat_num }}</div>
 <div class="container-fluid">
-<div class="row">
-<div class="col-md-12 pl-5">
+<div class="row" style="display:flex;width: 95vw;">
+    
+<!-- Sidebar -->
+<div class="col-auto sidebar py-3" style="">
+<ul class="nav nav-sidebar" style="position:relative;float:left;height:100%;align-content:start;">
+        <ul class="list-unstyled components pr-5">
+        <div class="sidebar-header">
+            <h4 class="ml-2"><b>[chats]</b></h4>
+        </div>
+        </ul>
+        <hr/>
+        <br>
+
+<!--         Public Chats -->
+        <ul class="list-unstyled components">
+             <h5 class="small text-muted font-weight-light m-3">Public</h5>               
+            <ul class="nav nav-pills flex-column mb-auto">
+<!--                <li class="nav-item">
+                    <a href="/1" class="nav-link active" aria-current="page">
+                        [Hello World!]
+                    </a>
+                    </li> -->
+                <div id="sidebarPublicChats"></div>
+            </ul>
+            
+        </ul>
+
+<!--         Private Chats -->
+
+        <ul class="list-unstyled components">
+             <h5 class="small text-muted font-weight-light m-3">Private</h5>
+             <ul class="nav nav-pills flex-column mb-auto">
+<!--                <li class="nav-item">
+                    <a href="/1" class="nav-link active" aria-current="page">
+                        [Hello World!]
+                    </a>
+                    </li> -->
+                <div id="sidebarPrivateChats"></div>
+            </ul>
+        </ul>
+    
+        <div class="mt-auto align-items-end" style="left:0;bottom:0;align-items: center;justify-content: center;align-content: end;">
+                <hr>
+                <a href="/profile" class="d-flex align-items-center mb-auto link-dark text-decoration-none" aria-expanded="false">
+                    <img src="{{ current_user.profile_pic }}" class="rounded-circle mx-2" alt="Profile Picture" width="12" height="12"><strong class="lightText">{{ current_user.username }}</strong>
+                </a>     
+        </div> 
+
+</ul>
+    
+      
+    
+</div>    
+    
+<div class="col-auto pl-1" style="flex-direction:column;flex:1">
 <div class="container">
 <h3 class="heading text-center">[{{ chatname }}]</h3>
 <div class="messaging">
@@ -62,52 +115,7 @@
     </div>
     </div>
 
-<!-- Sidebar -->
-<div class="sidebar py-5 my-5">
-<ul class="nav nav-sidebar" style="position:relative;">
-        <ul class="list-unstyled components pr-5">
-        <div class="sidebar-header">
-            <h4 class="ml-2"><b>[chats]</b></h4>
-        </div>
-        </ul>
-        <hr/>
-        <br>
 
-<!--         Public Chats -->
-        <ul class="list-unstyled components">
-             <h5 class="small text-muted font-weight-light m-3">Public</h5>               
-            <ul class="nav nav-pills flex-column mb-auto">
-<!--                <li class="nav-item">
-                    <a href="/1" class="nav-link active" aria-current="page">
-                        [Hello World!]
-                    </a>
-                    </li> -->
-                <div id="sidebarPublicChats"></div>
-            </ul>
-            <div style="position: fixed;left:0;bottom:0;align-items: center;justify-content: center;">
-                <hr>
-                <a href="/profile" class="d-flex align-items-center mb-auto link-dark text-decoration-none" aria-expanded="false">
-                    <img src="{{ current_user.profile_pic }}" class="rounded-circle mx-2" alt="Profile Picture" width="12" height="12"><strong class="lightText">{{ current_user.username }}</strong>
-                </a>     
-            </div>   
-        </ul>
-
-<!--         Private Chats -->
-
-        <ul class="list-unstyled components">
-             <h5 class="small text-muted font-weight-light m-3">Private</h5>
-             <ul class="nav nav-pills flex-column mb-auto">
-<!--                <li class="nav-item">
-                    <a href="/1" class="nav-link active" aria-current="page">
-                        [Hello World!]
-                    </a>
-                    </li> -->
-                <div id="sidebarPrivateChats"></div>
-            </ul>
-        </ul>
-
-</ul>
-</div>
 </div>  
     
 </div>
