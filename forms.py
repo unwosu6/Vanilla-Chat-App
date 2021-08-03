@@ -52,7 +52,7 @@ class InviteToChat(FlaskForm):
 class SendMessage(FlaskForm):
     msg = StringField(
         'message', validators=[
-                Length(
+            Length(
                 min=0, max=240)])
     submit2 = SubmitField('send')
 
