@@ -11,7 +11,7 @@ import pickle
 from imgur import upload_img
 from youtube import get_search_results, extract_info_json, video_url
 from werkzeug.utils import secure_filename
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from giphy import build_url, get_results, parse_json
 from pytz import timezone
 import pytz
@@ -215,6 +215,12 @@ def other_profile(user_id):
     curr_user = load_user(current_user.id)
     if user:
         # create list of current user's private chats to invite the user to
+        now = datetime.utcnow()
+        print(now-user.last_active)
+        if (now-user.last_active) < timedelta(minutes=10) :
+            activity = 'status-circle'
+        else:
+            activity = 'status-circle-red'
         curr_user_private_chats = []
         with open(curr_user.chats, 'rb') as handle:
             curr_user_chats = pickle.load(handle)
@@ -235,7 +241,8 @@ def other_profile(user_id):
             'other_profile.html',
             user=user, form=form,
             name=user.username,
-            current_user=current_user)
+            current_user=current_user,
+            activity=activity)
     return render_template('home.html')
 
 # MUST FIX MUST FIX
