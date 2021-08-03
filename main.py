@@ -455,7 +455,7 @@ def chat(chat_id):
             content=form.msg.data)
         db.session.add(msg)
         db.session.commit()
-
+        form.msg.data = ""
     return render_template(
         'chats.html', chatname=chatname,
         chat_id=chat_id, form=form, chat_num=chat_num)

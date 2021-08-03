@@ -24,13 +24,19 @@
             <div id="profile-pic">
                     <img src="{{ current_user.profile_pic }}" class="rounded-circle" alt="Profile Picture"> 
             </div>
-            <input type='file' name="files" id="uploadPDF"/>
+            <input class="form-control form-control-lg" type='file' name="files" id="uploadPDF"/>
             <br>
-            <label for="dis-name">Change Display Name:</label><br>
-            <input type="text" id="dis-name" value="{{ current_user.display_name }}" name="dis-name" maxlength="20"><br>
+            <label for="dis-name">[display name]</label><br>
+            <input class="form-control form-control-lg" type="text" id="dis-name" value="{{ current_user.display_name }}" name="dis-name" maxlength="20">
+            <small id="create-chat-help" class="form-text text-muted">
+                this is the name other users will see in chat
+            </small>
             <br>
-            <label for="bio">Change Bio:</label><br>
-            <textarea id="bio" name="bio" rows="5" cols="30" wrap="soft" maxlength="600" method="post">{{ current_user.bio }}</textarea>
+            <label for="bio">[bio]</label><br>
+            <textarea class="form-control form-control-lg" id="bio" name="bio" rows="2" cols="30" wrap="soft" maxlength="600" method="post">{{ current_user.bio }}</textarea>
+            <small id="create-chat-help" class="form-text text-muted">
+                limit: 120 characters
+            </small>
             <br>
             <input class="btn btn-primary btn-lg" type = "submit" value = "Save Changes" id = "submit"/>
         </form>

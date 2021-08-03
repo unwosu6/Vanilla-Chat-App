@@ -18,6 +18,13 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <script src="../static/profile.js"></script>  
         <script src="../static/chat.js"></script>
+        <script src="../static/chat_sidebar.js"></script>
+        <script type="text/javascript">
+        window.setTimeout(function() {
+            $('.alert').fadeOut('slow');
+        }, 3000); 
+        </script>
+
     </head>
     <body>
       <header class="site-header">
@@ -34,6 +41,7 @@
                 {% if not current_user.is_authenticated %}
                 <a class="nav-item nav-link" href="/register">Register</a>
                 <a class="nav-item nav-link" href="/login">Login</a>
+                <a class="nav-item nav-link" href="/about">About</a>
                 {% endif %}
                 {% if current_user.is_authenticated %}
                 <a class="nav-item nav-link" href="/home">Home</a>

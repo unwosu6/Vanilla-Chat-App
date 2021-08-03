@@ -3,9 +3,9 @@ $(function(){
     current = $('#hidden-chat-num').text()-1
 });
 $(setInterval(function(){
-    var $allMessages = $('#all-msgs')
-    var $user_id = $('#hidden-user-id').text()
-    var $chat_id = $('#hidden-chat-id').text()
+    var $allMessages = $('#all-msgs');
+    var $user_id = $('#hidden-user-id').text();
+    var $chat_id = $('#hidden-chat-id').text();
     $.ajax({
         type: 'GET',
         url: '/api/chat/' + $chat_id + '/messages',

@@ -28,6 +28,26 @@
 
 }
 
+input::-webkit-file-upload-button {
+display: inline-block;
+    font-weight: 400;
+    line-height: 1.5;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    background-color: var(--button);
+    border: 1px solid transparent;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    border-radius: .25rem;
+
+}
+
 body {
   background: var(--background);
   color: #333333;
@@ -331,6 +351,29 @@ img {max-width: 100%;}
     text-align: center;
     display: inline-block;
 }
+
+/*----- Chat Sidebar -----*/
+
+.sidebar {
+    width: 180px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 999;
+    background: #362919;
+    color: #fff;
+    transition: all 0.3s;
+}
+
+.green-nav {
+  background-color: #5ea644;    
+}
+
+.sidebar-link {
+  color: #fff;
+}
+
 
 /*----- Welcome -----*/
 
