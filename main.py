@@ -219,8 +219,10 @@ def other_profile(user_id):
         print(user.profile_pic)
         if (now-user.last_active) < timedelta(minutes=10):
             activity = 'status-circle'
+            active = True
         else:
             activity = 'status-circle-red'
+            active = False
         curr_user_private_chats = []
         with open(curr_user.chats, 'rb') as handle:
             curr_user_chats = pickle.load(handle)
@@ -242,7 +244,8 @@ def other_profile(user_id):
             user=user, form=form,
             name=user.username,
             current_user=current_user,
-            activity=activity)
+            activity=activity,
+            active=active)
     return render_template('home.html')
 
 # MUST FIX MUST FIX
