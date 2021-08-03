@@ -217,7 +217,7 @@ def other_profile(user_id):
         # create list of current user's private chats to invite the user to
         now = datetime.utcnow()
         print(user.profile_pic)
-        if (now-user.last_active) < timedelta(minutes=10) :
+        if (now-user.last_active) < timedelta(minutes=10):
             activity = 'status-circle'
         else:
             activity = 'status-circle-red'
