@@ -8,7 +8,7 @@ def get_input():
 
 def get_search_results(api_key, keyword):
     url = "https://www.googleapis.com/youtube/v3/search?part=snippet" + \
-        "&maxResults=1&q=" + \
+        "&maxResults=5&q=" + \
         keyword + "&key=" + api_key
 
     response = requests.get(url)
@@ -18,7 +18,12 @@ def get_search_results(api_key, keyword):
 
 def extract_info_json(data):
     if data != "":
-        video_id = data['items'][0]['id']['videoId']
+        try:
+            video_id = data['items'][0]['id']['videoId']
+        except KeyError:
+            video_id = data['items'][1]['id']['videoId']
+        except:
+            video_id = data['items'][2]['id']['videoId']
         return video_id
     else:
         return []
