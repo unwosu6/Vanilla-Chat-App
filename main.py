@@ -50,6 +50,7 @@ class User(UserMixin, db.Model):
     profile_pic = db.Column(db.String(120), unique=False)
     Message = db.relationship("Message", backref="user", lazy=True)
     AllGroupChats = db.relationship("AllGroupChats", backref="user", lazy=True)
+    last_active = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.password}')"
@@ -737,6 +738,12 @@ def userdata(get_user):
         print('opened pickle object')
     userObj['profile_pic'] = user.profile_pic
     return jsonify(userObj)
+
+
+@app.before_request
+def update_last_active():
+    current_user.last_active = datetime.utcnow()
+    db.session.commit()
 
 
 if __name__ == '__main__':
