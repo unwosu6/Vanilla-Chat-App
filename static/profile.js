@@ -39,7 +39,7 @@ $(function(){
         success: function(privateChats) {
             $.each(privateChats, function(i, chat) {
                 if (chat.owner_id == $current_user_id) {
-                    $publicChats.append('<div class="jumbotron">' +
+                    $privateChats.append('<div class="jumbotron">' +
                     '<h1 class="display-4">[' + chat.display_name + ']</h1>' +
                     '<p class="lead">[' + chat.description + ']</p>' +
                     '<hr class="my-4">' +
@@ -65,7 +65,7 @@ $(function(){
         url: '/api/profile/PrivateChats/' + $user_id + "/" + $current_user_id,
         success: function(sharedPrivateChats) {
             $.each(sharedPrivateChats, function(i, chat) {
-                if (chat.owner_id == $current_user_id) {
+                if ((chat.owner_id == $current_user_id) && ($user_id != $current_user_id)) {
                     $publicChats.append('<div class="jumbotron">' +
                     '<h1 class="display-4">[' + chat.display_name + ']</h1>' +
                     '<p class="lead">[' + chat.description + ']</p>' +
