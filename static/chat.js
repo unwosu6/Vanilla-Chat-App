@@ -1,4 +1,8 @@
+var current;
 $(function(){
+    current = $('#hidden-chat-num').text()-1
+});
+$(setInterval(function(){
     var $allMessages = $('#all-msgs');
     var $user_id = $('#hidden-user-id').text();
     var $chat_id = $('#hidden-chat-id').text();
@@ -6,6 +10,12 @@ $(function(){
         type: 'GET',
         url: '/api/chat/' + $chat_id + '/messages',
         success: function(allMessages) {
+            var total_msgs = Object.keys(allMessages).length;
+//             var current = Object.keys($allMessages).length;
+//             var current = $('#hidden-chat-num').text() + 1;
+            if(total_msgs != current){
+                $('#all-msgs').empty()
+                current =  current + 1;
             $.each(allMessages, function(i, msg) {
                 if (msg.user_sent_id != $user_id) {
                     if (msg.content.includes("https://www.youtube.com/embed/")){
@@ -58,6 +68,7 @@ $(function(){
                     );
                     } else{
                         $allMessages.append(
+                            total_msgs + 'space' + current + 'space' + allMessages + 'space' + $allMessages +
                         '<div class="outgoing_msg">' +
                         '<div class="sent_msg">' +
                         '<p>' + msg.content + '</p>' +
@@ -67,6 +78,12 @@ $(function(){
                     }
                 }
              });
+            }
         }
     });
-});
+}, 1000)
+);
+// $(document).ajaxStop(function(){
+//         window.location.reload();
+//     }
+// });
