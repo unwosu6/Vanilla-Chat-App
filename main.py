@@ -465,7 +465,7 @@ def chat(chat_id):
         db.session.add(msg)
         db.session.commit()
         form.msg.data = ""
-    chat_num = Message.query.all()
+    chat_num = Message.query.filter_by(chat_id=chat_id).all()
     chat_num = len(chat_num)
 #     chat_num = chat_num - 1
     print(chat_num)
