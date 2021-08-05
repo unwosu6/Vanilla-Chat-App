@@ -37,7 +37,7 @@ app.config['UPLOAD_FOLDER'] = IMAGES
 app.config['MAX_CONTENT_PATH'] = '100000000'
 
 # Model to store all users
-
+# Reset for demo
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
